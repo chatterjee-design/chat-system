@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import '../../utils/time_formater.dart';
-import 'components/chat_content.dart';
+import 'components/chat_container.dart';
+import 'components/chat_input_bat.dart';
 
 class ChatDetailScreen extends StatelessWidget {
   final String currentUserId = '1';
 
   final List<Map<String, dynamic>> messages = [
+    // --- Today ---
     {
       'id': '1',
       'senderId': '1',
       'name': 'You',
       'avatar': '',
       'isOnline': true,
-      'timestamp': '2025-08-04T09:45:00Z',
+      "timestamp": "2025-08-06T00:00:00Z",
       'type': 'text',
       'content': 'Hey, how are you?',
     },
@@ -23,7 +25,7 @@ class ChatDetailScreen extends StatelessWidget {
       'name': 'You',
       'avatar': '',
       'isOnline': true,
-      'timestamp': '2025-08-04T09:45:00Z',
+      "timestamp": "2025-08-06T00:02:00Z",
       'type': 'text',
       'content': 'Hey, how are you?',
     },
@@ -33,19 +35,49 @@ class ChatDetailScreen extends StatelessWidget {
       'name': 'You',
       'avatar': '',
       'isOnline': true,
-      'timestamp': '2025-08-04T09:45:00Z',
+      'timestamp': '2025-08-06T09:30:00Z',
+      'type': 'text',
+      'content': 'Hey, how are you?',
+    },
+    {
+      'id': '1',
+      'senderId': '1',
+      'name': 'You',
+      'avatar': '',
+      'isOnline': true,
+      'timestamp': '2025-08-06T09:30:00Z',
+      'type': 'text',
+      'content': 'Hey, how are you?',
+    },
+    {
+      'id': '1',
+      'senderId': '1',
+      'name': 'You',
+      'avatar': '',
+      'isOnline': true,
+      'timestamp': '2025-08-06T09:30:00Z',
       'type': 'text',
       'content': 'Hey, how are you?',
     },
     {
       'id': '2',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
+      'senderId': '2',
+      'name': 'John Doe',
+      'avatar': 'https://i.pravatar.cc/150?img=3',
       'isOnline': true,
-      'timestamp': '2025-08-04T09:60:80Z',
+      'timestamp': '2025-08-06T08:31:00Z',
       'type': 'text',
-      'content': 'Hey again!',
+      'content': 'Hey! All good here.',
+    },
+    {
+      'id': '2',
+      'senderId': '2',
+      'name': 'John Doe',
+      'avatar': 'https://i.pravatar.cc/150?img=3',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:31:00Z',
+      'type': 'text',
+      'content': 'Hey! All good here.',
     },
     {
       'id': '3',
@@ -53,9 +85,117 @@ class ChatDetailScreen extends StatelessWidget {
       'name': 'John Doe',
       'avatar': 'https://i.pravatar.cc/150?img=3',
       'isOnline': true,
-      'timestamp': '2025-08-04T09:46:00Z',
+      'timestamp': '2025-08-06T09:31:30Z',
       'type': 'text',
-      'content': 'Hi!',
+      'content': 'Just finished a meeting.',
+    },
+    {
+      'id': '4',
+      'senderId': '2',
+      'name': 'John Doe',
+      'avatar': 'https://i.pravatar.cc/150?img=3',
+      'isOnline': true,
+      'timestamp': '2025-08-06T09:32:00Z',
+      'type': 'text',
+      'content': 'What about you?',
+    },
+    {
+      'id': '5',
+      'senderId': '1',
+      'name': 'You',
+      'avatar': '',
+      'isOnline': true,
+      'timestamp': '2025-08-06T09:33:00Z',
+      'type': 'image',
+      'content':
+          'https://images.pexels.com/photos/33209986/pexels-photo-33209986.jpeg',
+    },
+    {
+      'id': '6',
+      'senderId': '2',
+      'name': 'John Doe',
+      'avatar': 'https://i.pravatar.cc/150?img=3',
+      'isOnline': true,
+      'timestamp': '2025-08-06T09:34:00Z',
+      'type': 'pdf',
+      'content':
+          'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    },
+
+    // --- Yesterday ---
+    {
+      'id': '7',
+      'senderId': '1',
+      'name': 'You',
+      'avatar': '',
+      'isOnline': true,
+      'timestamp': '2025-08-05T18:15:00Z',
+      'type': 'text',
+      'content': 'Did you get the report?',
+    },
+    {
+      'id': '8',
+      'senderId': '2',
+      'name': 'John Doe',
+      'avatar': 'https://i.pravatar.cc/150?img=3',
+      'isOnline': false,
+      'timestamp': '2025-08-05T18:20:00Z',
+      'type': 'text',
+      'content':
+          'Yes, I sent it back with comments. Please review the points I marked in red.',
+    },
+    {
+      'id': '9',
+      'senderId': '2',
+      'name': 'John Doe',
+      'avatar': 'https://i.pravatar.cc/150?img=3',
+      'isOnline': false,
+      'timestamp': '2025-08-05T18:21:00Z',
+      'type': 'text',
+      'content': 'Let me know if anything needs clarification.',
+    },
+    {
+      'id': '10',
+      'senderId': '2',
+      'name': 'John Doe',
+      'avatar': 'https://i.pravatar.cc/150?img=3',
+      'isOnline': false,
+      'timestamp': '2025-08-05T18:22:00Z',
+      'type': 'text',
+      'content': 'We can finalize it tomorrow.',
+    },
+
+    // --- 7 Days Ago ---
+    {
+      'id': '11',
+      'senderId': '3',
+      'name': 'Jane Smith',
+      'avatar': 'https://i.pravatar.cc/150?img=5',
+      'isOnline': false,
+      'timestamp': '2025-07-30T11:00:00Z',
+      'type': 'text',
+      'content': 'Meeting postponed to next Monday.',
+    },
+    {
+      'id': '12',
+      'senderId': '1',
+      'name': 'You',
+      'avatar': '',
+      'isOnline': true,
+      'timestamp': '2025-07-30T11:03:00Z',
+      'type': 'image',
+      'content':
+          'https://images.pexels.com/photos/1472999/pexels-photo-1472999.jpeg',
+    },
+    {
+      'id': '13',
+      'senderId': '3',
+      'name': 'Jane Smith',
+      'avatar': 'https://i.pravatar.cc/150?img=5',
+      'isOnline': false,
+      'timestamp': '2025-07-30T11:05:00Z',
+      'type': 'pdf',
+      'content': 'https://www.africau.edu/images/default/sample.pdf',
     },
   ];
 
@@ -113,79 +253,32 @@ class ChatDetailScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final msg = messages[index];
           final isSender = msg['senderId'] == currentUserId;
-
-          final DateTime currentTime = DateTime.parse(
-            msg['timestamp'],
-          ).toLocal();
-
-          // Compare with previous message
-          DateTime? previousTime;
-          if (index > 0) {
-            previousTime = DateTime.parse(
-              messages[index - 1]['timestamp'],
-            ).toLocal();
-          }
-
-          // Show time only if first message or time gap > 2 mins
           final bool showTimestamp =
               index == 0 ||
-              previousTime == null ||
-              currentTime.difference(previousTime).inMinutes > 2 ||
-              msg['senderId'] != messages[index - 1]['senderId'];
+              msg['senderId'] != messages[index - 1]['senderId'] ||
+              DateTime.parse(msg['timestamp'])
+                      .difference(
+                        DateTime.parse(messages[index - 1]['timestamp']),
+                      )
+                      .abs()
+                      .inMinutes >
+                  2;
 
-          // Show avatar/name if sender changed
           final bool showAvatarAndName =
               index == 0 || msg['senderId'] != messages[index - 1]['senderId'];
 
-          return Align(
-            alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Column(
-                crossAxisAlignment: isSender
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-                children: [
-                  if (!isSender && showAvatarAndName)
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 16,
-                          backgroundImage: NetworkImage(msg['avatar']),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          msg['name'],
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  const SizedBox(height: 4),
-                  Container(
-                    constraints: const BoxConstraints(maxWidth: 300),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isSender
-                          ? Colors.lightBlue[100]
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: chatContent(msg),
-                  ),
-                  const SizedBox(height: 4),
-                  if (showTimestamp)
-                    Text(
-                      AppFormatedTime.getTime(
-                        msg['timestamp'],
-                      ), // shows '4:05 PM'
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    ),
-                ],
-              ),
-            ),
+          return chatContainer(
+            index: index,
+            msg: msg,
+            isSender: isSender,
+            context: context,
+            showAvatarAndName: showAvatarAndName,
+            showTime: showTimestamp,
+            messages: messages,
           );
         },
       ),
+      bottomNavigationBar: ChatInputBar(),
     );
   }
 }
