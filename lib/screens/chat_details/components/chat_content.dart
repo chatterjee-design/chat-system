@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_system/core/font/app_font.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +29,7 @@ Widget chatContent(Map<String, dynamic> msg, {required Color color}) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
         child: GestureDetector(
-          onTap: () => launchURL(msg['content']),
+          onTap: () => _launchUrl,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: const [
@@ -46,7 +48,7 @@ Widget chatContent(Map<String, dynamic> msg, {required Color color}) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
         child: GestureDetector(
-          onTap: () => launchURL(msg['content']),
+          onTap: () => _launchUrl,
           child: Text(
             msg['content'],
             style: appText(
@@ -62,9 +64,10 @@ Widget chatContent(Map<String, dynamic> msg, {required Color color}) {
   }
 }
 
-Future<void> launchURL(String url) async {
-  final uri = Uri.tryParse(url);
-  if (uri != null && await canLaunchUrl(uri)) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
+final Uri _url = Uri.parse('https://flutter.dev');
+
+Future<void> _launchUrl() async {
+  if (!await launchUrl(_url)) {
+    throw Exception('Could not launch $_url');
   }
 }

@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
       darkTheme: ThemeData.dark(),
-      home: const ChatListScreen(),
+      home: ChatListScreen(),
     );
   }
 }

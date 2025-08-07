@@ -1,209 +1,82 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'dart:async';
+import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'components/chat_container.dart';
 import 'components/chat_input_bat.dart';
+import 'components/jump_to_bottom_btn.dart';
+import 'components/weavy_line.dart';
 
-class ChatDetailScreen extends StatelessWidget {
+class ChatDetailScreen extends StatefulWidget {
+  ChatDetailScreen({super.key});
+
+  @override
+  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+}
+
+class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final String currentUserId = '1';
 
-  final List<Map<String, dynamic>> messages = [
-    // --- Today ---
-    {
-      'id': '1',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
-      'isOnline': true,
-      "timestamp": "2025-08-06T00:00:00Z",
-      'type': 'text',
-      'content': 'Hey, how are you?',
-    },
-    {
-      'id': '1',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
-      'isOnline': true,
-      "timestamp": "2025-08-06T00:02:00Z",
-      'type': 'text',
-      'content': 'Hey, how are you?',
-    },
-    {
-      'id': '1',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
-      'isOnline': true,
-      'timestamp': '2025-08-06T09:30:00Z',
-      'type': 'text',
-      'content': 'Hey, how are you?',
-    },
-    {
-      'id': '1',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
-      'isOnline': true,
-      'timestamp': '2025-08-06T09:30:00Z',
-      'type': 'text',
-      'content': 'Hey, how are you?',
-    },
-    {
-      'id': '1',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
-      'isOnline': true,
-      'timestamp': '2025-08-06T09:30:00Z',
-      'type': 'text',
-      'content': 'Hey, how are you?',
-    },
-    {
-      'id': '2',
-      'senderId': '2',
-      'name': 'John Doe',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-      'isOnline': true,
-      'timestamp': '2025-08-06T08:31:00Z',
-      'type': 'text',
-      'content': 'Hey! All good here.',
-    },
-    {
-      'id': '2',
-      'senderId': '2',
-      'name': 'John Doe',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-      'isOnline': true,
-      'timestamp': '2025-08-06T08:31:00Z',
-      'type': 'text',
-      'content': 'Hey! All good here.',
-    },
-    {
-      'id': '3',
-      'senderId': '2',
-      'name': 'John Doe',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-      'isOnline': true,
-      'timestamp': '2025-08-06T09:31:30Z',
-      'type': 'text',
-      'content': 'Just finished a meeting.',
-    },
-    {
-      'id': '4',
-      'senderId': '2',
-      'name': 'John Doe',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-      'isOnline': true,
-      'timestamp': '2025-08-06T09:32:00Z',
-      'type': 'text',
-      'content': 'What about you?',
-    },
-    {
-      'id': '5',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
-      'isOnline': true,
-      'timestamp': '2025-08-06T09:33:00Z',
-      'type': 'image',
-      'content':
-          'https://images.pexels.com/photos/33209986/pexels-photo-33209986.jpeg',
-    },
-    {
-      'id': '6',
-      'senderId': '2',
-      'name': 'John Doe',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-      'isOnline': true,
-      'timestamp': '2025-08-06T09:34:00Z',
-      'type': 'pdf',
-      'content':
-          'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    },
+  final ScrollController _scrollController = ScrollController();
 
-    // --- Yesterday ---
-    {
-      'id': '7',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
-      'isOnline': true,
-      'timestamp': '2025-08-05T18:15:00Z',
-      'type': 'text',
-      'content': 'Did you get the report?',
-    },
-    {
-      'id': '8',
-      'senderId': '2',
-      'name': 'John Doe',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-      'isOnline': false,
-      'timestamp': '2025-08-05T18:20:00Z',
-      'type': 'text',
-      'content':
-          'Yes, I sent it back with comments. Please review the points I marked in red.',
-    },
-    {
-      'id': '9',
-      'senderId': '2',
-      'name': 'John Doe',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-      'isOnline': false,
-      'timestamp': '2025-08-05T18:21:00Z',
-      'type': 'text',
-      'content': 'Let me know if anything needs clarification.',
-    },
-    {
-      'id': '10',
-      'senderId': '2',
-      'name': 'John Doe',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-      'isOnline': false,
-      'timestamp': '2025-08-05T18:22:00Z',
-      'type': 'text',
-      'content': 'We can finalize it tomorrow.',
-    },
+  bool showJumpToBottom = false;
 
-    // --- 7 Days Ago ---
-    {
-      'id': '11',
-      'senderId': '3',
-      'name': 'Jane Smith',
-      'avatar': 'https://i.pravatar.cc/150?img=5',
-      'isOnline': false,
-      'timestamp': '2025-07-30T11:00:00Z',
-      'type': 'text',
-      'content': 'Meeting postponed to next Monday.',
-    },
-    {
-      'id': '12',
-      'senderId': '1',
-      'name': 'You',
-      'avatar': '',
-      'isOnline': true,
-      'timestamp': '2025-07-30T11:03:00Z',
-      'type': 'image',
-      'content':
-          'https://images.pexels.com/photos/1472999/pexels-photo-1472999.jpeg',
-    },
-    {
-      'id': '13',
-      'senderId': '3',
-      'name': 'Jane Smith',
-      'avatar': 'https://i.pravatar.cc/150?img=5',
-      'isOnline': false,
-      'timestamp': '2025-07-30T11:05:00Z',
-      'type': 'pdf',
-      'content': 'https://www.africau.edu/images/default/sample.pdf',
-    },
-  ];
+  Timer? _hideButtonTimer;
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(_handleScroll);
+  }
+
+  void scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController
+              .position
+              .minScrollExtent, // min scroll extent bcz listview is reversed
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _handleScroll() {
+    final distanceFromBottom = _scrollController.position.pixels;
+    // log(distanceFromBottom.toString());
+
+    if (distanceFromBottom > 300) {
+      if (!showJumpToBottom) {
+        setState(() => showJumpToBottom = true);
+      }
+
+      _hideButtonTimer?.cancel();
+      _hideButtonTimer = Timer(const Duration(milliseconds: 500), () {
+        if (mounted) setState(() => showJumpToBottom = false);
+      });
+    } else {
+      if (showJumpToBottom) {
+        setState(() => showJumpToBottom = false);
+        _hideButtonTimer?.cancel();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _hideButtonTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final sender = messages.firstWhere(
       (msg) => msg['senderId'] != currentUserId,
     );
+    final Uri _url = Uri.parse('https://flutter.dev');
 
     return Scaffold(
       appBar: AppBar(
@@ -242,30 +115,83 @@ class ChatDetailScreen extends StatelessWidget {
             ),
           ],
         ),
-        actions: const [
-          Icon(Icons.more_vert, color: Colors.black),
+        actions: [
+          InkWell(
+            onTap: () {
+              log(_scrollController.position.maxScrollExtent.toString());
+            },
+            child: Icon(Icons.more_vert, color: Colors.black),
+          ),
           SizedBox(width: 8),
         ],
       ),
       body: ListView.builder(
+        reverse: true,
+        controller: _scrollController,
         padding: const EdgeInsets.all(12),
         itemCount: messages.length,
         itemBuilder: (context, index) {
           final msg = messages[index];
+          // log(' $index, ${msg['content']}');
           final isSender = msg['senderId'] == currentUserId;
+
+          final bool isLastMessage = index == messages.length - 1;
+
           final bool showTimestamp =
-              index == 0 ||
-              msg['senderId'] != messages[index - 1]['senderId'] ||
+              isLastMessage ||
+              msg['senderId'] != messages[index + 1]['senderId'] ||
               DateTime.parse(msg['timestamp'])
                       .difference(
-                        DateTime.parse(messages[index - 1]['timestamp']),
+                        DateTime.parse(messages[index + 1]['timestamp']),
                       )
                       .abs()
                       .inMinutes >
                   2;
 
           final bool showAvatarAndName =
-              index == 0 || msg['senderId'] != messages[index - 1]['senderId'];
+              isLastMessage ||
+              msg['senderId'] != messages[index + 1]['senderId'];
+
+          if (index == 2) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Row(
+                    // spacing: 8,
+                    children: [
+                      Expanded(child: WavyLine()),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          'Unread',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+
+                      Expanded(child: WavyLine()),
+                    ],
+                  ),
+                ),
+
+                chatContainer(
+                  index: index,
+                  msg: msg,
+                  isSender: isSender,
+                  context: context,
+                  showAvatarAndName: showAvatarAndName,
+                  showTime: showTimestamp,
+                  messages: messages,
+                ),
+              ],
+            );
+          }
 
           return chatContainer(
             index: index,
@@ -278,7 +204,279 @@ class ChatDetailScreen extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: ChatInputBar(),
+      bottomNavigationBar: ChatInputBar(
+        scrollToBottom: () {
+          scrollToBottom();
+        },
+      ),
+      floatingActionButton: AnimatedOpacity(
+        opacity: showJumpToBottom ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        child: AnimatedScale(
+          scale: showJumpToBottom ? 1.0 : 0.8,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: IgnorePointer(
+            ignoring: !showJumpToBottom,
+            child: jumpToBottomBtn(scrollToBottom: scrollToBottom),
+          ),
+        ),
+      ),
     );
   }
+
+  final List<Map<String, dynamic>> messages = [
+    {
+      'id': '1',
+      'senderId': '1',
+      'name': 'Cat Lover',
+      'avatar':
+          'https://images.pexels.com/photos/1643456/pexels-photo-1643456.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:00:00Z',
+      'type': 'text',
+      'content': 'This cat is adorable!',
+    },
+    {
+      'id': '2',
+      'senderId': '1',
+      'name': 'Cat Lover',
+      'avatar':
+          'https://images.pexels.com/photos/1643456/pexels-photo-1643456.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:03:00Z',
+      'type': 'image',
+      'content':
+          'https://images.pexels.com/photos/2071873/pexels-photo-2071873.jpeg',
+    },
+    {
+      'id': '3',
+      'senderId': '1',
+      'name': 'Cat Lover',
+      'avatar':
+          'https://images.pexels.com/photos/1643456/pexels-photo-1643456.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:04:30Z',
+      'type': 'text',
+      'content': 'Dogs are cute too!',
+    },
+    // {
+    //   'id': '7',
+    //   'senderId': '1',
+    //   'name': 'Foodie',
+    //   'avatar':
+    //       'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+    //   'isOnline': true,
+    //   'timestamp': '2025-08-06T08:07:00Z',
+    //   'type': 'pdf',
+    //   'content':
+    //       ' https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    // },
+    // {
+    //   'id': '7',
+    //   'senderId': '1',
+    //   'name': 'Foodie',
+    //   'avatar':
+    //       'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+    //   'isOnline': true,
+    //   'timestamp': '2025-08-06T08:07:00Z',
+    //   'type': 'link',
+    //   'content':
+    //       ' https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    // },
+    {
+      'id': '4',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:05:00Z',
+      'type': 'text',
+      'content': 'I made pasta today. Want some?',
+    },
+    {
+      'id': '5',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:05:50Z',
+      'type': 'image',
+      'content':
+          'https://images.pexels.com/photos/262959/pexels-photo-262959.jpeg',
+    },
+    {
+      'id': '6',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:06:30Z',
+      'type': 'text',
+      'content': 'Check out this recipe!',
+    },
+    {
+      'id': '7',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:07:00Z',
+      'type': 'pdf',
+      'content':
+          'https://file-examples.com/wp-content/uploads/2017/10/file-sample_150kB.pdf',
+    },
+    {
+      'id': '8',
+      'senderId': '1',
+      'name': 'Cat Lover',
+      'avatar':
+          'https://images.pexels.com/photos/15925994/pexels-photo-15925994.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:09:30Z',
+      'type': 'text',
+      'content': 'Look at this sleepy kitty!',
+    },
+    {
+      'id': '9',
+      'senderId': '1',
+      'name': 'Cat Lover',
+      'avatar':
+          'https://images.pexels.com/photos/15925994/pexels-photo-15925994.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:10:50Z',
+      'type': 'image',
+      'content':
+          'https://images.pexels.com/photos/15925994/pexels-photo-15925994.jpeg',
+    },
+    {
+      'id': '10',
+      'senderId': '1',
+      'name': 'Cat Lover',
+      'avatar':
+          'https://images.pexels.com/photos/15925994/pexels-photo-15925994.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:11:30Z',
+      'type': 'pdf',
+      'content': 'https://www.orimi.com/pdf-test.pdf',
+    },
+    {
+      'id': '11',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/2641886/pexels-photo-2641886.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:14:00Z',
+      'type': 'text',
+      'content': 'Time to eat something healthy.',
+    },
+    {
+      'id': '12',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/2641886/pexels-photo-2641886.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:15:00Z',
+      'type': 'text',
+      'content': 'Have you tried quinoa salad before?',
+    },
+    {
+      'id': '13',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/2641886/pexels-photo-2641886.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:16:00Z',
+      'type': 'text',
+      'content': 'It’s really filling and super quick to make.',
+    },
+    {
+      'id': '14',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/2641886/pexels-photo-2641886.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:16:50Z',
+      'type': 'image',
+      'content':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+    },
+    {
+      'id': '15',
+      'senderId': '1',
+      'name': 'Cat Lover',
+      'avatar':
+          'https://images.pexels.com/photos/2071873/pexels-photo-2071873.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:20:00Z',
+      'type': 'image',
+      'content':
+          'https://images.pexels.com/photos/2071873/pexels-photo-2071873.jpeg',
+    },
+    {
+      'id': '16',
+      'senderId': '1',
+      'name': 'Cat Lover',
+      'avatar':
+          'https://images.pexels.com/photos/2071873/pexels-photo-2071873.jpeg',
+      'isOnline': false,
+      'timestamp': '2025-08-06T08:22:00Z',
+      'type': 'text',
+      'content': 'Let’s adopt one someday!',
+    },
+    {
+      'id': '17',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:25:00Z',
+      'type': 'text',
+      'content': 'That sounds good! Let’s meet this weekend.',
+    },
+    {
+      'id': '18',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:25:50Z',
+      'type': 'text',
+      'content': 'Also, I’ll bring the cookies 🍪',
+    },
+    {
+      'id': '19',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:26:30Z',
+      'type': 'text',
+      'content': 'Freshly baked this morning!',
+    },
+    {
+      'id': '20',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:27:00Z',
+      'type': 'pdf',
+      'content':
+          'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    },
+  ];
 }

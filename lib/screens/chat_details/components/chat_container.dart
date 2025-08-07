@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/font/app_font.dart';
@@ -8,52 +10,40 @@ bool shouldShowBottomLeftRadiusForCurrent({
   required int index,
   required List<Map<String, dynamic>> messages,
 }) {
-  if (index == messages.length - 1) return true;
+  if (index == 0) return true; // Last message in chat
 
   final currentMsg = messages[index];
-  final nextMsg = messages[index + 1];
+  final previousMsg = messages[index - 1]; // previous visually (lower index)
 
-  final sameSender = currentMsg['senderId'] == nextMsg['senderId'];
+  final sameSender = currentMsg['senderId'] == previousMsg['senderId'];
 
-  final nextShowTime =
-      index + 1 == 0 ||
-      DateTime.parse(
-            nextMsg['timestamp'],
-          ).difference(DateTime.parse(currentMsg['timestamp'])).inMinutes >
-          2 ||
-      currentMsg['senderId'] != nextMsg['senderId'];
+  final timeDiff = DateTime.parse(
+    currentMsg['timestamp'],
+  ).difference(DateTime.parse(previousMsg['timestamp'])).inMinutes;
 
-  final nextShowAvatar = currentMsg['senderId'] != nextMsg['senderId'];
+  final isTimeBreak = timeDiff.abs() > 2;
 
-  if (sameSender && !nextShowTime && !nextShowAvatar) {
-    return false; // Continue group — no bottomLeft radius
-  }
-
-  return true; // Last in group — apply bottomLeft radius
+  return !(sameSender && !isTimeBreak);
 }
 
 bool shouldShowBottomRightRadiusForCurrent({
   required int index,
   required List<Map<String, dynamic>> messages,
 }) {
-  if (index == messages.length - 1) return true;
+  if (index == 0) return true;
 
   final currentMsg = messages[index];
-  final nextMsg = messages[index + 1];
+  final previousMsg = messages[index - 1];
 
-  final sameSender = currentMsg['senderId'] == nextMsg['senderId'];
+  final sameSender = currentMsg['senderId'] == previousMsg['senderId'];
 
-  final timeDiffInMinutes = DateTime.parse(
-    nextMsg['timestamp'],
-  ).difference(DateTime.parse(currentMsg['timestamp'])).inMinutes;
+  final timeDiff = DateTime.parse(
+    currentMsg['timestamp'],
+  ).difference(DateTime.parse(previousMsg['timestamp'])).inMinutes;
 
-  final nextShowTime = timeDiffInMinutes > 2 || !sameSender;
+  final isTimeBreak = timeDiff.abs() > 2;
 
-  if (sameSender && !nextShowTime) {
-    return false; // Still part of group → flat corner
-  }
-
-  return true; // End of group → rounded corner
+  return !(sameSender && !isTimeBreak);
 }
 
 Widget chatContainer({
@@ -143,6 +133,7 @@ Widget chatContainer({
                       ? (shouldShowBottomLeftRadiusForCurrent(
                               index: index,
                               messages: messages,
+                              // msg: msg['content'],
                             ))
                             ? 30
                             : 0

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ChatInputBar extends StatefulWidget {
-  const ChatInputBar({super.key});
+  final Function scrollToBottom;
+  const ChatInputBar({super.key, required this.scrollToBottom});
 
   @override
   State<ChatInputBar> createState() => _ChatInputBarState();
@@ -30,16 +31,15 @@ class _ChatInputBarState extends State<ChatInputBar> {
   void sendMessage() {
     final message = _controller.text.trim();
     if (message.isNotEmpty) {
-      print('Send: $message');
       _controller.clear();
-      // Optionally add: FocusScope.of(context).unfocus();
+      widget.scrollToBottom();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: MediaQuery.of(context).viewInsets, // pushes up with keyboard
+      padding: MediaQuery.of(context).viewInsets,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
         decoration: const BoxDecoration(color: Colors.white),
