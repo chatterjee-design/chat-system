@@ -76,7 +76,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     final sender = messages.firstWhere(
       (msg) => msg['senderId'] != currentUserId,
     );
-    final Uri _url = Uri.parse('https://flutter.dev');
 
     return Scaffold(
       appBar: AppBar(
@@ -170,7 +169,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey[600],
+                            color: Colors.blueGrey,
                           ),
                         ),
                       ),
@@ -212,15 +211,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       floatingActionButton: AnimatedOpacity(
         opacity: showJumpToBottom ? 1.0 : 0.0,
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        child: AnimatedScale(
-          scale: showJumpToBottom ? 1.0 : 0.8,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          child: IgnorePointer(
-            ignoring: !showJumpToBottom,
-            child: jumpToBottomBtn(scrollToBottom: scrollToBottom),
-          ),
+        curve: Curves.easeOut,
+        child: IgnorePointer(
+          ignoring: !showJumpToBottom,
+          child: jumpToBottomBtn(scrollToBottom: scrollToBottom),
         ),
       ),
     );
@@ -261,30 +255,29 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       'type': 'text',
       'content': 'Dogs are cute too!',
     },
-    // {
-    //   'id': '7',
-    //   'senderId': '1',
-    //   'name': 'Foodie',
-    //   'avatar':
-    //       'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
-    //   'isOnline': true,
-    //   'timestamp': '2025-08-06T08:07:00Z',
-    //   'type': 'pdf',
-    //   'content':
-    //       ' https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    // },
-    // {
-    //   'id': '7',
-    //   'senderId': '1',
-    //   'name': 'Foodie',
-    //   'avatar':
-    //       'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
-    //   'isOnline': true,
-    //   'timestamp': '2025-08-06T08:07:00Z',
-    //   'type': 'link',
-    //   'content':
-    //       ' https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    // },
+    {
+      'id': '7',
+      'senderId': '1',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:07:00Z',
+      'type': 'pdf',
+      'content': 'assets/pdf/pdf.pdf',
+    },
+    {
+      'id': '7',
+      'senderId': '1',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:07:00Z',
+      'type': 'text',
+      'content':
+          ' https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    },
     {
       'id': '4',
       'senderId': '2',
@@ -294,7 +287,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       'isOnline': true,
       'timestamp': '2025-08-06T08:05:00Z',
       'type': 'text',
-      'content': 'I made pasta today. Want some?',
+      'content': 'I made pasta today. Want some? food.ai',
+    },
+    {
+      'id': '4',
+      'senderId': '2',
+      'name': 'Foodie',
+      'avatar':
+          'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg',
+      'isOnline': true,
+      'timestamp': '2025-08-06T08:05:00Z',
+      'type': 'text',
+      'content': 'kabab.com',
     },
     {
       'id': '5',
@@ -328,8 +332,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       'isOnline': true,
       'timestamp': '2025-08-06T08:07:00Z',
       'type': 'pdf',
-      'content':
-          'https://file-examples.com/wp-content/uploads/2017/10/file-sample_150kB.pdf',
+      'content': 'assets/pdf/pdf.pdf',
     },
     {
       'id': '8',
@@ -363,7 +366,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       'isOnline': false,
       'timestamp': '2025-08-06T08:11:30Z',
       'type': 'pdf',
-      'content': 'https://www.orimi.com/pdf-test.pdf',
+      'content': 'assets/pdf/pdf.pdf',
     },
     {
       'id': '11',
@@ -374,7 +377,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       'isOnline': false,
       'timestamp': '2025-08-06T08:14:00Z',
       'type': 'text',
-      'content': 'Time to eat something healthy.',
+      'content': 'assets/pdf/pdf.pdf',
     },
     {
       'id': '12',
@@ -475,8 +478,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       'isOnline': true,
       'timestamp': '2025-08-06T08:27:00Z',
       'type': 'pdf',
-      'content':
-          'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+      'content': 'assets/pdf/pdf.pdf',
     },
   ];
 }

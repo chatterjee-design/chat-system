@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../../../core/font/app_font.dart';
@@ -54,113 +52,136 @@ Widget chatContainer({
   required int index,
   required bool showAvatarAndName,
   required List<Map<String, dynamic>> messages,
-}) => Container(
-  margin: EdgeInsets.only(top: showAvatarAndName ? 20 : 3),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisAlignment: !isSender
-        ? MainAxisAlignment.start
-        : MainAxisAlignment.end,
-    spacing: !isSender ? 10 : 0,
-    children: [
-      !isSender
-          ? showAvatarAndName || showTime
+}) {
+  final backgroundColor = !isSender ? Colors.grey[200]! : Colors.blueGrey[200]!;
+
+  return Container(
+    margin: EdgeInsets.only(top: showAvatarAndName ? 20 : 3),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: !isSender
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.end,
+      spacing: !isSender ? 10 : 0,
+      children: [
+        !isSender
+            ? showAvatarAndName || showTime
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: CircleAvatar(
+                        radius: 17,
+                        backgroundImage: NetworkImage(msg['avatar']!),
+                      ),
+                    )
+                  : SizedBox(width: 34, height: 34)
+            : SizedBox.shrink(),
+        Column(
+          crossAxisAlignment: !isSender
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.end,
+          children: [
+            showAvatarAndName || showTime
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 30.0),
-                    child: CircleAvatar(
-                      radius: 17,
-                      backgroundImage: NetworkImage(msg['avatar']!),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0,
+                      vertical: 6,
+                    ),
+                    child: Row(
+                      spacing: !isSender ? 10 : 0,
+                      mainAxisAlignment: !isSender
+                          ? MainAxisAlignment.start
+                          : MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        !isSender
+                            ? Text(
+                                msg['name'],
+                                style: appText(
+                                  size: 13,
+                                  weight: FontWeight.w400,
+                                ),
+                              )
+                            : SizedBox.shrink(),
+                        Text(
+                          AppFormatedTime.formattedTimestamp(msg['timestamp']),
+                          style: appText(size: 11, weight: FontWeight.w400),
+                        ),
+                      ],
                     ),
                   )
-                : SizedBox(width: 34, height: 34)
-          : SizedBox.shrink(),
-      Column(
-        crossAxisAlignment: !isSender
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.end,
-        children: [
-          showAvatarAndName || showTime
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 6,
-                  ),
-                  child: Row(
-                    spacing: !isSender ? 10 : 0,
-                    mainAxisAlignment: !isSender
-                        ? MainAxisAlignment.start
-                        : MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      !isSender
-                          ? Text(
-                              msg['name'],
-                              style: appText(size: 13, weight: FontWeight.w400),
-                            )
-                          : SizedBox.shrink(),
-                      Text(
-                        AppFormatedTime.formattedTimestamp(msg['timestamp']),
-                        style: appText(size: 11, weight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                )
-              : SizedBox.shrink(),
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.5,
-            ),
-
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(
-                  !isSender
-                      ? (!showTime && !showAvatarAndName)
-                            ? 0
-                            : 30
-                      : 30,
-                ),
-                topRight: Radius.circular(
-                  isSender
-                      ? (!showTime)
-                            ? 0
-                            : 30
-                      : 30,
-                ),
-                bottomLeft: Radius.circular(
-                  !isSender
-                      ? (shouldShowBottomLeftRadiusForCurrent(
-                              index: index,
-                              messages: messages,
-                              // msg: msg['content'],
-                            ))
-                            ? 30
-                            : 0
-                      : 30,
-                ),
-                bottomRight: Radius.circular(
-                  isSender
-                      ? shouldShowBottomRightRadiusForCurrent(
-                              index: index,
-                              messages: messages,
-                            )
-                            ? 30
-                            : 0
-                      : 30,
-                ),
+                : SizedBox.shrink(),
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.5,
               ),
 
-              color: !isSender ? Colors.grey[200] : Colors.blueGrey[300],
-              // borderRadius: BorderRadius.circular(22),
+              // padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(
+                    !isSender
+                        ? (!showTime && !showAvatarAndName)
+                              ? 5
+                              : 20
+                        : 20,
+                  ),
+                  topRight: Radius.circular(
+                    isSender
+                        ? (!showTime)
+                              ? 5
+                              : 20
+                        : 20,
+                  ),
+                  bottomLeft: Radius.circular(
+                    !isSender
+                        ? (shouldShowBottomLeftRadiusForCurrent(
+                                index: index,
+                                messages: messages,
+                                // msg: msg['content'],
+                              ))
+                              ? 20
+                              : 5
+                        : 20,
+                  ),
+                  bottomRight: Radius.circular(
+                    isSender
+                        ? shouldShowBottomRightRadiusForCurrent(
+                                index: index,
+                                messages: messages,
+                              )
+                              ? 20
+                              : 5
+                        : 20,
+                  ),
+                ),
+                border: msg['type'] != 'text'
+                    ? Border.all(color: backgroundColor, width: 3)
+                    : null,
+
+                color: msg['type'] != 'pdf' ? backgroundColor : Colors.white,
+              ),
+              child: chatContent(
+                msg,
+                isSender: isSender,
+                showAvatarAndName: showAvatarAndName,
+                showTime: showTime,
+                shouldShowBottomLeftRadiusForCurrent:
+                    shouldShowBottomLeftRadiusForCurrent(
+                      index: index,
+                      messages: messages,
+                    ),
+                shouldShowBottomRightRadiusForCurrent:
+                    shouldShowBottomRightRadiusForCurrent(
+                      index: index,
+                      messages: messages,
+                    ),
+                color: isSender ? Colors.white : Colors.black,
+                context: context,
+              ),
             ),
-            child: chatContent(
-              msg,
-              color: isSender ? Colors.white : Colors.black,
-            ),
-          ),
-        ],
-      ),
-    ],
-  ),
-);
+          ],
+        ),
+      ],
+    ),
+  );
+}

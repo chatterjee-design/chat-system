@@ -13,7 +13,7 @@ class WavyLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.grey
+      ..color = Colors.blueGrey
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
