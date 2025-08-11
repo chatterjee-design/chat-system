@@ -1,7 +1,11 @@
-import 'dart:developer';
-
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'dart:io';
+import 'package:chat_system/screens/chat_details/components/voice_message_weave.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
+import 'show_emojie_picker.dart';
+import 'voice_rec.dart';
 
 class ChatInputBar extends StatefulWidget {
   final Function scrollToBottom;
@@ -17,6 +21,32 @@ class _ChatInputBarState extends State<ChatInputBar> {
   bool showEmojiPicker = false;
   FocusNode focusNode = FocusNode();
 
+  final ImagePicker _picker = ImagePicker();
+  XFile? _image;
+
+  // final AudioPlayer _audioPlayer = AudioPlayer();
+
+  final AudioRecorder _recorder = AudioRecorder();
+  bool _isRecording = false;
+  String? _recordedFilePath;
+
+  Future<void> _startRecording() async {
+    if (await _recorder.hasPermission()) {
+      final dir = await getApplicationDocumentsDirectory();
+      final path =
+          '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+      await _recorder.start(const RecordConfig(), path: path);
+      setState(() => _isRecording = true);
+    }
+  }
+
+  Future<String?> _stopRecording() async {
+    final path = await _recorder.stop();
+    setState(() => _isRecording = false);
+    return path;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +58,6 @@ class _ChatInputBarState extends State<ChatInputBar> {
 
     focusNode.addListener(() {
       if (focusNode.hasFocus && showEmojiPicker) {
-        // Hide emoji picker if keyboard is opened
         setState(() {
           showEmojiPicker = false;
         });
@@ -40,6 +69,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
   void dispose() {
     _controller.dispose();
     focusNode.dispose();
+    _recorder.dispose();
     super.dispose();
   }
 
@@ -63,7 +93,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
       setState(() {
         showEmojiPicker = true;
       });
-      _showEmojiPickerBottomSheet(context).whenComplete(() {
+      showEmojiPickerBottomSheet(context, _controller).whenComplete(() {
         setState(() {
           showEmojiPicker = false;
         });
@@ -72,206 +102,191 @@ class _ChatInputBarState extends State<ChatInputBar> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            decoration: const BoxDecoration(color: Colors.white),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.add, color: Colors.black),
-                  onPressed: () {},
-                ),
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      hintStyle: const TextStyle(color: Colors.black54),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      suffixIcon: IconButton(
-                        icon: const Icon(
-                          Icons.emoji_emotions_outlined,
-                          color: Colors.black,
-                        ),
-                        onPressed: () => _toggleEmojiPicker(context),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                    ),
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                hasText
-                    ? IconButton(
-                        icon: const Icon(Icons.send, color: Colors.black),
-                        onPressed: sendMessage,
-                      )
-                    : Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.image_outlined,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.mic_none_outlined,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-              ],
-            ),
-          ),
-        ),
-        // if (showEmojiPicker)
-        //   SizedBox(
-        //     height: 250,
-        //     child: EmojiPicker(
-        //       onEmojiSelected: (category, emoji) {
-        //         _controller.text += emoji.emoji;
-        //       },
-        //       onBackspacePressed: () {},
-        //       textEditingController: _controller,
-        //     ),
-        //   ),
-        // Show emoji picker if toggled
-      ],
-    );
+  Future<void> pickImageFromGalary() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() => _image = pickedFile);
+    }
   }
 
-  Future<void> _showEmojiPickerBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        final height = MediaQuery.of(context).size.height * 0.95;
-        return SizedBox(
-          height: height,
-          child: ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 20, right: 10, left: 10),
-
-              child: EmojiPicker(
-                onEmojiSelected: (category, emoji) {
-                  Navigator.pop(context);
-                },
-
-                config: Config(
-                  viewOrderConfig: ViewOrderConfig(
-                    bottom: EmojiPickerItem.categoryBar,
-                    top: EmojiPickerItem.searchBar,
-                    middle: EmojiPickerItem.emojiView,
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _recordedFilePath != null
+          ? const Color.fromARGB(136, 193, 206, 215)
+          : Colors.transparent,
+      child: Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          // decoration: const BoxDecoration(color: Colors.white),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (_recordedFilePath == null)
+                IconButton(
+                  icon: const Icon(
+                    Icons.add_circle_outline,
+                    color: Colors.teal,
                   ),
-                  emojiViewConfig: EmojiViewConfig(
-                    columns: 9,
-                    emojiSizeMax: 27,
-                    verticalSpacing: 5,
-                    horizontalSpacing: 5,
-                    backgroundColor: Colors.white,
-                  ),
+                  onPressed: () {},
+                ),
 
-                  searchViewConfig: SearchViewConfig(
-                    backgroundColor: Colors.white,
-                  ),
-                  categoryViewConfig: CategoryViewConfig(
-                    indicatorColor: Colors.teal,
-                    iconColorSelected: Colors.teal,
-                    dividerColor: Colors.transparent,
-                    backgroundColor: Colors.white,
-                  ),
-                  bottomActionBarConfig: BottomActionBarConfig(
-                    showBackspaceButton: true,
-                    showSearchViewButton: true,
-                    customBottomActionBar: (config, state, showSearchView) {
-                      return Container(
-                        padding: EdgeInsets.symmetric(
-                          // horizontal: 10,
+              Expanded(
+                child: _recordedFilePath != null
+                    ? VoiceMessageWidget(
+                        filePath: _recordedFilePath!,
+                        onDelete: () {
+                          setState(() => _recordedFilePath = null);
+                        },
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: Colors.black),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
                           vertical: 10,
                         ),
-                        color: Colors.white, // background color
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: Icon(Icons.close),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: OutlinedButton.icon(
-                                  onPressed: showSearchView,
-                                  icon: Icon(
-                                    Icons.search,
-                                    color: Colors.blueGrey,
-                                  ),
-                                  label: Text(
-                                    'Search',
-                                    style: TextStyle(color: Colors.blueGrey),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    side: BorderSide(color: Colors.blueGrey),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                            Stack(
+                              children: [
+                                TextField(
+                                  controller: _controller,
+                                  focusNode: focusNode,
+                                  maxLines: null,
+                                  decoration: InputDecoration(
+                                    hintText: 'Type a message...',
+                                    hintStyle: TextStyle(color: Colors.black54),
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.only(
+                                      right: _image == null ? 22 : 22,
+                                      left: _image == null ? 0 : 4,
+                                      top: _image == null ? 0 : 4,
+                                      bottom: _image == null ? 0 : 4,
                                     ),
-                                    padding: EdgeInsets.symmetric(vertical: 12),
-                                    backgroundColor: Colors.white,
+                                  ),
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: InkWell(
+                                    onTap: () => _toggleEmojiPicker(context),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: _image == null ? 0 : 5,
+                                      ),
+                                      child: Icon(
+                                        Icons.emoji_emotions_outlined,
+                                        color: Colors.teal,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
+
+                            if (_image != null) ...[
+                              const SizedBox(height: 8),
+                              SizedBox(
+                                height: 114,
+                                width: 114,
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 0,
+                                      bottom: 0,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.file(
+                                          File(_image!.path),
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            setState(() => _image = null),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 4,
+                                            ),
+                                            color: Colors.black54,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          padding: const EdgeInsets.all(4),
+                                          child: const Icon(
+                                            Icons.close,
+                                            size: 16,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ],
                         ),
-                      );
-                    },
-
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                onBackspacePressed: () {},
-                textEditingController: _controller,
+                      ),
               ),
-            ),
+
+              const SizedBox(width: 8),
+
+              // Show send button if we have text or voice message,
+              // else show image picker + record buttons (only if no voice message recorded)
+              (_recordedFilePath != null || hasText)
+                  ? InkWell(
+                      onTap: () => sendMessage(),
+                      child: Icon(Icons.send, color: Colors.black),
+                    )
+                  : Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.image_outlined,
+                            color: Colors.teal,
+                          ),
+                          onPressed: pickImageFromGalary,
+                        ),
+                        RecordButton(
+                          isRecording: _isRecording,
+                          onRecordStart: () async {
+                            setState(() {
+                              _isRecording = true;
+                              _recordedFilePath = null;
+                            });
+                            await _startRecording();
+                          },
+                          onRecordStop: () async {
+                            final path = await _stopRecording();
+                            setState(() {
+                              _isRecording = false;
+                              _recordedFilePath = path;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

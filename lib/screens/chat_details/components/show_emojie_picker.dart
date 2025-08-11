@@ -1,92 +1,109 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 
-class ShowEmojiePicker extends StatefulWidget {
-  const ShowEmojiePicker({super.key});
+Future<void> showEmojiPickerBottomSheet(BuildContext context, controller) {
+  return showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      final height = MediaQuery.of(context).size.height * 0.95;
+      return SizedBox(
+        height: height,
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 
-  @override
-  State<ShowEmojiePicker> createState() => _ShowEmojiePickerState();
-}
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 20, right: 10, left: 10),
 
-class _ShowEmojiePickerState extends State<ShowEmojiePicker> {
-  final TextEditingController _controller = TextEditingController();
+            child: EmojiPicker(
+              onEmojiSelected: (category, emoji) {
+                Navigator.pop(context);
+              },
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
+              config: Config(
+                viewOrderConfig: ViewOrderConfig(
+                  bottom: EmojiPickerItem.categoryBar,
+                  top: EmojiPickerItem.searchBar,
+                  middle: EmojiPickerItem.emojiView,
+                ),
+                emojiViewConfig: EmojiViewConfig(
+                  columns: 9,
+                  emojiSizeMax: 27,
+                  verticalSpacing: 5,
+                  horizontalSpacing: 5,
+                  backgroundColor: Colors.white,
+                ),
 
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Container(
-          height: MediaQuery.of(context).size.height * 1,
-          child: EmojiPicker(
-            onEmojiSelected: (category, emoji) {
-              setState(() {
-                _controller.text += emoji.emoji;
-              });
-              Navigator.pop(context);
-            },
-            config: Config(
-              viewOrderConfig: ViewOrderConfig(
-                bottom: EmojiPickerItem.categoryBar,
-                top: EmojiPickerItem.searchBar,
-                middle: EmojiPickerItem.emojiView,
-              ),
-              emojiViewConfig: EmojiViewConfig(
-                emojiSizeMax: 30,
-                verticalSpacing: 5,
-                horizontalSpacing: 5,
-                backgroundColor: Colors.white,
-              ),
-
-              searchViewConfig: SearchViewConfig(backgroundColor: Colors.white),
-              categoryViewConfig: CategoryViewConfig(
-                indicatorColor: Colors.teal,
-                iconColorSelected: Colors.teal,
-                dividerColor: Colors.transparent,
-                backgroundColor: Colors.white,
-              ),
-              bottomActionBarConfig: BottomActionBarConfig(
-                showBackspaceButton: true,
-                showSearchViewButton: true,
-                customBottomActionBar: (config, state, showSearchView) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    color: Colors.white, // background color
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: showSearchView,
-                            icon: Icon(Icons.search, color: Colors.blueGrey),
-                            label: Text(
-                              'Search',
-                              style: TextStyle(color: Colors.blueGrey),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Colors.blueGrey),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                searchViewConfig: SearchViewConfig(
+                  backgroundColor: Colors.white,
+                ),
+                categoryViewConfig: CategoryViewConfig(
+                  indicatorColor: Colors.teal,
+                  iconColorSelected: Colors.teal,
+                  dividerColor: Colors.transparent,
+                  backgroundColor: Colors.white,
+                ),
+                bottomActionBarConfig: BottomActionBarConfig(
+                  showBackspaceButton: true,
+                  showSearchViewButton: true,
+                  customBottomActionBar: (config, state, showSearchView) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        // horizontal: 10,
+                        vertical: 10,
+                      ),
+                      color: Colors.white, // background color
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(Icons.close),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: OutlinedButton.icon(
+                                onPressed: showSearchView,
+                                icon: Icon(
+                                  Icons.search,
+                                  color: Colors.blueGrey,
+                                ),
+                                label: Text(
+                                  'Search',
+                                  style: TextStyle(color: Colors.blueGrey),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(color: Colors.blueGrey),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  backgroundColor: Colors.white,
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              backgroundColor: Colors.white,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                        ],
+                      ),
+                    );
+                  },
 
-                backgroundColor: Colors.white,
+                  backgroundColor: Colors.white,
+                ),
               ),
+              onBackspacePressed: () {},
+              textEditingController: controller,
             ),
-            onBackspacePressed: () {},
-            textEditingController: _controller,
           ),
         ),
-      ),
-    );
-  }
+      );
+    },
+  );
 }
