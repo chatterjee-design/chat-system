@@ -47,7 +47,6 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
   }
 
   Future<void> _togglePlayPause() async {
-    print('object');
     if (isPlaying) {
       await _audioPlayer.pause();
       setState(() => isPlaying = false);
