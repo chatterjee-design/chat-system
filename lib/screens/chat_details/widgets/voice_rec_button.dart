@@ -31,7 +31,7 @@ class RecordButton extends StatelessWidget {
         ),
         child: Icon(
           isRecording ? Icons.stop : Icons.mic,
-          color: isRecording ? Colors.red : Colors.black,
+          color: isRecording ? Colors.red : Colors.teal,
           size: 26,
         ),
       ),

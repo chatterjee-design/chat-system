@@ -1,5 +1,8 @@
 import 'package:chat_system/screens/chat_list/chat_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'provider/chat_details_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,15 +14,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chat App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.indigo,
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => ChatDetailsProvider())],
+      child: MaterialApp(
+        title: 'Chat App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          brightness: Brightness.light,
+          primarySwatch: Colors.indigo,
+        ),
+        darkTheme: ThemeData.dark(),
+        home: ChatListScreen(),
       ),
-      darkTheme: ThemeData.dark(),
-      home: ChatListScreen(),
     );
   }
 }

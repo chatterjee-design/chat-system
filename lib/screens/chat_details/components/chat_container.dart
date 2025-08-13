@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/font/app_font.dart';
 import '../../../utils/time_formater.dart';
-import 'chat_content.dart';
+import '../widgets/chat_content.dart';
 
 bool shouldShowBottomLeftRadiusForCurrent({
   required int index,

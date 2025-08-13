@@ -28,7 +28,6 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
   void initState() {
     super.initState();
 
-    // Generate random waveform data for demo
     final rnd = Random();
     waveform = List.generate(50, (_) => rnd.nextDouble() * 0.9 + 0.1);
 

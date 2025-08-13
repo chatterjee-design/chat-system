@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import '../chat_search_screen.dart/chat_search_screen.dart';
 import 'components/chat_container.dart';
 import 'components/chat_input_bat.dart';
 import 'components/jump_to_bottom_btn.dart';
-import 'components/weavy_line.dart';
+import 'widgets/weavy_line.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   ChatDetailScreen({super.key});
@@ -115,11 +114,61 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           ],
         ),
         actions: [
-          InkWell(
-            onTap: () {
-              log(_scrollController.position.maxScrollExtent.toString());
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert, color: Colors.black),
+            onSelected: (value) {
+              if (value == 'Search') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChatSearchScreen()),
+                );
+              } else if (value == 'Shared') {
+                // Handle shared action
+              } else if (value == 'Board') {
+                // Handle board action
+              }
             },
-            child: Icon(Icons.more_vert, color: Colors.black),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'Search',
+                child: SizedBox(
+                  width: 150, // Increase width
+                  child: Row(
+                    children: const [
+                      Icon(Icons.search, color: Colors.black54),
+                      SizedBox(width: 10),
+                      Text('Search'),
+                    ],
+                  ),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'Shared',
+                child: SizedBox(
+                  width: 150, // Increase width
+                  child: Row(
+                    children: const [
+                      Icon(Icons.folder_open, color: Colors.black54),
+                      SizedBox(width: 10),
+                      Text('Shared'),
+                    ],
+                  ),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'Board',
+                child: SizedBox(
+                  width: 150, // Increase width
+                  child: Row(
+                    children: const [
+                      Icon(Icons.push_pin, color: Colors.black54),
+                      SizedBox(width: 10),
+                      Text('Board'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
           SizedBox(width: 8),
         ],

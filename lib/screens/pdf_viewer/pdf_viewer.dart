@@ -29,18 +29,24 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
       final filePath = '${dir.path}/temp.pdf';
 
       if (widget.pdfUrl.startsWith('http')) {
+        // Download network PDF to temp file
         await Dio().download(widget.pdfUrl, filePath);
+        localPath = filePath;
       } else if (widget.pdfUrl.startsWith('assets/')) {
+        // Load from assets
         final data = await rootBundle.load(widget.pdfUrl);
         final bytes = data.buffer.asUint8List();
         final file = File(filePath);
         await file.writeAsBytes(bytes);
+        localPath = filePath;
+      } else if (File(widget.pdfUrl).existsSync()) {
+        // Local file path (from XFile, file picker, etc.)
+        localPath = widget.pdfUrl;
       } else {
         throw Exception("Invalid PDF path");
       }
 
       setState(() {
-        localPath = filePath;
         isLoading = false;
       });
     } catch (e) {

@@ -1,14 +1,11 @@
-import 'dart:typed_data';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_system/core/font/app_font.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:pdfx/pdfx.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../pdf_viewer/pdf_viewer.dart';
+import 'pdf_preview.dart';
 
 Widget chatContent(
   Map<String, dynamic> msg, {
@@ -190,121 +187,3 @@ Future<void> _launchUrl({required String url}) async {
 }
 
 enum PdfSourceType { asset, file, network }
-
-class PdfPreview extends StatefulWidget {
-  final String source;
-  final bool isSender;
-  final bool showTime;
-  final bool showAvatarAndName;
-  final bool shouldShowBottomRightRadiusForCurrent;
-  final bool shouldShowBottomLeftRadiusForCurrent;
-  final bool isNetwork;
-
-  const PdfPreview({
-    super.key,
-    required this.source,
-    required this.showAvatarAndName,
-    required this.shouldShowBottomRightRadiusForCurrent,
-    required this.shouldShowBottomLeftRadiusForCurrent,
-    required this.showTime,
-    required this.isSender,
-    this.isNetwork = true,
-  });
-
-  @override
-  State<PdfPreview> createState() => _PdfPreviewState();
-}
-
-class _PdfPreviewState extends State<PdfPreview> {
-  final Dio dio = Dio();
-  late Future<Uint8List> _pdfPreviewFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _pdfPreviewFuture = _renderFirstPageBytes();
-  }
-
-  Future<Uint8List> _renderFirstPageBytes() async {
-    PdfDocument document;
-
-    if (!widget.isNetwork) {
-      if (widget.source.startsWith('assets/')) {
-        document = await PdfDocument.openAsset(widget.source);
-      } else {
-        document = await PdfDocument.openFile(widget.source);
-      }
-    } else {
-      final resp = await dio.get<List<int>>(
-        widget.source,
-        options: Options(responseType: ResponseType.bytes),
-      );
-      if (resp.statusCode != 200 || resp.data == null) {
-        throw Exception('Failed to download PDF');
-      }
-      document = await PdfDocument.openData(Uint8List.fromList(resp.data!));
-    }
-
-    final page = await document.getPage(1);
-    final pageImage = await page.render(
-      width: page.width * 2,
-      height: page.height * 2,
-      format: PdfPageImageFormat.jpeg,
-      backgroundColor: '#FFFFFFFF',
-    );
-
-    final bytes = pageImage!.bytes;
-    await page.close();
-    await document.close();
-
-    return bytes;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 130,
-      width: 200,
-      child: FutureBuilder<Uint8List>(
-        future: _pdfPreviewFuture, // ← use cached future
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            return ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(
-                  !widget.isSender
-                      ? (!widget.showTime && !widget.showAvatarAndName)
-                            ? 5
-                            : 20
-                      : 20,
-                ),
-                topRight: Radius.circular(
-                  widget.isSender
-                      ? (!widget.showTime)
-                            ? 5
-                            : 20
-                      : 20,
-                ),
-                // bottomLeft: Radius.circular(
-                //   !widget.isSender
-                //       ? (widget.shouldShowBottomLeftRadiusForCurrent ? 20 : 5)
-                //       : 20,
-                // ),
-                // bottomRight: Radius.circular(
-                //   widget.isSender
-                //       ? (widget.shouldShowBottomRightRadiusForCurrent ? 20 : 5)
-                //       : 20,
-                // ),
-              ),
-              child: Image.memory(snapshot.data!, fit: BoxFit.cover),
-            );
-          }
-        },
-      ),
-    );
-  }
-}
