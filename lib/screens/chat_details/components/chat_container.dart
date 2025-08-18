@@ -54,7 +54,71 @@ Widget chatContainer({
   required List<Map<String, dynamic>> messages,
 }) {
   final backgroundColor = !isSender ? Colors.grey[200]! : Colors.blueGrey[200]!;
+  double dx = 0.0;
 
+  return StatefulBuilder(
+    builder: (context, setState) {
+      const double maxDrag = 120;
+      const double swipeThreshold = 80;
+
+      void updateDx(double newDx) {
+        setState(() {
+          dx = newDx.clamp(-maxDrag, maxDrag);
+        });
+      }
+
+      void snapBack() {
+        setState(() {
+          dx = 0.0;
+        });
+      }
+
+      return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onHorizontalDragUpdate: (details) {
+          updateDx(dx + details.delta.dx);
+        },
+        onHorizontalDragEnd: (_) {
+          if (dx.abs() > swipeThreshold) {
+            if (dx > 0) {
+              debugPrint("➡️ Right swipe detected on message $index");
+            } else {
+              debugPrint("⬅️ Left swipe detected on message $index");
+            }
+          }
+          snapBack();
+        },
+        onHorizontalDragStart: (_) {
+          debugPrint("Horizontal drag started");
+        },
+        child: Transform.translate(
+          offset: Offset(dx, 0),
+          child: bubbleWidget(
+            showAvatarAndName,
+            isSender,
+            showTime,
+            msg,
+            context,
+            index,
+            messages,
+            backgroundColor,
+          ), // <-- your chat bubble
+        ),
+      );
+    },
+  );
+}
+
+Widget bubbleWidget(
+  bool showAvatarAndName,
+  bool isSender,
+  bool showTime,
+  Map<String, dynamic> msg,
+  BuildContext context,
+  int index,
+  List<Map<String, dynamic>> messages,
+  Color backgroundColor,
+) {
   return Container(
     margin: EdgeInsets.only(top: showAvatarAndName ? 20 : 3),
     child: Row(
@@ -115,7 +179,6 @@ Widget chatContainer({
                 maxWidth: MediaQuery.of(context).size.width * 0.5,
               ),
 
-              // padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(

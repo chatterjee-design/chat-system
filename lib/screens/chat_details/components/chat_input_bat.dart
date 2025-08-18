@@ -1,14 +1,10 @@
-import 'dart:io';
-import 'package:chat_system/core/font/app_font.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/utils/file_icon_and_name.dart';
 import '../../../provider/chat_details_provider.dart';
 import '../../audio_rec.dart';
 import 'open_bottom_sheet.dart';
 import '../widgets/voice_message_weave.dart';
 import '../widgets/voice_rec_button.dart';
-import '../widgets/pdf_preview.dart';
 import '../widgets/text_field_send_msg.dart';
 
 class ChatInputBar extends StatelessWidget {
