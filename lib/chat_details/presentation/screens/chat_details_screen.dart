@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../chat_search_screen.dart/chat_search_screen.dart';
+import '../../../screens/chat_search_screen.dart/chat_search_screen.dart';
 import 'components/chat_container.dart';
 import 'components/chat_input_bat.dart';
 import 'components/jump_to_bottom_btn.dart';
-import 'widgets/weavy_line.dart';
+import '../widgets/weavy_line.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   ChatDetailScreen({super.key});

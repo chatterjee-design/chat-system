@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../core/font/app_font.dart';
 import '../../../core/utils/file_icon_and_name.dart';
 import '../../../provider/chat_details_provider.dart';
-import '../../pdf_viewer/pdf_viewer.dart';
+import '../../../screens/pdf_viewer/pdf_viewer.dart';
 import 'pdf_preview.dart';
 
 Widget textFieldForSendMessage(BuildContext context, ChatDetailsProvider chat) {
