@@ -1,250 +1,226 @@
+import 'dart:developer';
+
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../../../utils/emojie_storage.dart';
+import '../../widgets/bubbble_widget.dart';
+import '../../widgets/show_emojie_picker.dart';
 
-import '../../../../core/font/app_font.dart';
-import '../../../../utils/time_formater.dart';
-import '../../widgets/chat_content.dart';
+class ChatContainer extends StatefulWidget {
+  final Map<String, dynamic> msg;
+  final bool isSender;
+  final bool showTime;
+  final int index;
+  final bool showAvatarAndName;
+  final List<Map<String, dynamic>> messages;
 
-bool shouldShowBottomLeftRadiusForCurrent({
-  required int index,
-  required List<Map<String, dynamic>> messages,
-}) {
-  if (index == 0) return true; // Last message in chat
+  const ChatContainer({
+    super.key,
+    required this.msg,
+    required this.isSender,
+    required this.showTime,
+    required this.index,
+    required this.showAvatarAndName,
+    required this.messages,
+  });
 
-  final currentMsg = messages[index];
-  final previousMsg = messages[index - 1]; // previous visually (lower index)
-
-  final sameSender = currentMsg['senderId'] == previousMsg['senderId'];
-
-  final timeDiff = DateTime.parse(
-    currentMsg['timestamp'],
-  ).difference(DateTime.parse(previousMsg['timestamp'])).inMinutes;
-
-  final isTimeBreak = timeDiff.abs() > 2;
-
-  return !(sameSender && !isTimeBreak);
+  @override
+  State<ChatContainer> createState() => _ChatContainerState();
 }
 
-bool shouldShowBottomRightRadiusForCurrent({
-  required int index,
-  required List<Map<String, dynamic>> messages,
-}) {
-  if (index == 0) return true;
-
-  final currentMsg = messages[index];
-  final previousMsg = messages[index - 1];
-
-  final sameSender = currentMsg['senderId'] == previousMsg['senderId'];
-
-  final timeDiff = DateTime.parse(
-    currentMsg['timestamp'],
-  ).difference(DateTime.parse(previousMsg['timestamp'])).inMinutes;
-
-  final isTimeBreak = timeDiff.abs() > 2;
-
-  return !(sameSender && !isTimeBreak);
-}
-
-Widget chatContainer({
-  required BuildContext context,
-  required Map<String, dynamic> msg,
-  required bool isSender,
-  required bool showTime,
-  required int index,
-  required bool showAvatarAndName,
-  required List<Map<String, dynamic>> messages,
-}) {
-  final backgroundColor = !isSender ? Colors.grey[200]! : Colors.blueGrey[200]!;
+class _ChatContainerState extends State<ChatContainer> {
   double dx = 0.0;
 
-  return StatefulBuilder(
-    builder: (context, setState) {
-      const double maxDrag = 120;
-      const double swipeThreshold = 80;
+  static const double maxDrag = 120;
+  static const double swipeThreshold = 80;
 
-      void updateDx(double newDx) {
-        setState(() {
-          dx = newDx.clamp(-maxDrag, maxDrag);
-        });
-      }
+  bool isStarMessage = false;
 
-      void snapBack() {
-        setState(() {
-          dx = 0.0;
-        });
-      }
+  void updateDx(double newDx) {
+    setState(() {
+      dx = newDx.clamp(-maxDrag, maxDrag);
+    });
+  }
 
-      return GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onHorizontalDragUpdate: (details) {
-          updateDx(dx + details.delta.dx);
-        },
-        onHorizontalDragEnd: (_) {
-          if (dx.abs() > swipeThreshold) {
-            if (dx > 0) {
-              debugPrint("➡️ Right swipe detected on message $index");
-            } else {
-              debugPrint("⬅️ Left swipe detected on message $index");
-            }
+  void snapBack() {
+    setState(() {
+      dx = 0.0;
+    });
+  }
+
+  void copyMessage(BuildContext context, String message) {
+    Clipboard.setData(ClipboardData(text: message));
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Copied to clipboard")));
+
+    Navigator.pop(context);
+  }
+
+  void toggleStarMessage() {
+    setState(() {
+      isStarMessage = !isStarMessage;
+    });
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = !widget.isSender
+        ? Colors.grey[200]!
+        : Colors.blueGrey[200]!;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onLongPress: () {
+        showEmojiPicker();
+      },
+      onHorizontalDragUpdate: (details) {
+        updateDx(dx + details.delta.dx);
+      },
+      onHorizontalDragEnd: (_) {
+        if (dx.abs() > swipeThreshold) {
+          if (dx > 0) {
+            debugPrint("➡️ Right swipe detected on message ${widget.index}");
+          } else {
+            debugPrint("⬅️ Left swipe detected on message ${widget.index}");
           }
-          snapBack();
-        },
-        onHorizontalDragStart: (_) {
-          debugPrint("Horizontal drag started");
-        },
-        child: Transform.translate(
-          offset: Offset(dx, 0),
-          child: bubbleWidget(
-            showAvatarAndName,
-            isSender,
-            showTime,
-            msg,
-            context,
-            index,
-            messages,
-            backgroundColor,
-          ), // <-- your chat bubble
+        }
+        snapBack();
+      },
+      onHorizontalDragStart: (_) {
+        debugPrint("Horizontal drag started");
+      },
+      child: Transform.translate(
+        offset: Offset(dx, 0),
+        child: BubbleWidget(
+          showAvatarAndName: widget.showAvatarAndName,
+          isSender: widget.isSender,
+          showTime: widget.showTime,
+          msg: widget.msg,
+          context: context,
+          index: widget.index,
+          messages: widget.messages,
+          backgroundColor: backgroundColor,
+          isStarMessage: isStarMessage,
         ),
-      );
-    },
-  );
-}
+      ),
+    );
+  }
 
-Widget bubbleWidget(
-  bool showAvatarAndName,
-  bool isSender,
-  bool showTime,
-  Map<String, dynamic> msg,
-  BuildContext context,
-  int index,
-  List<Map<String, dynamic>> messages,
-  Color backgroundColor,
-) {
-  return Container(
-    margin: EdgeInsets.only(top: showAvatarAndName ? 20 : 3),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: !isSender
-          ? MainAxisAlignment.start
-          : MainAxisAlignment.end,
-      spacing: !isSender ? 10 : 0,
-      children: [
-        !isSender
-            ? showAvatarAndName || showTime
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: CircleAvatar(
-                        radius: 17,
-                        backgroundImage: NetworkImage(msg['avatar']!),
-                      ),
-                    )
-                  : SizedBox(width: 34, height: 34)
-            : SizedBox.shrink(),
-        Column(
-          crossAxisAlignment: !isSender
-              ? CrossAxisAlignment.start
-              : CrossAxisAlignment.end,
-          children: [
-            showAvatarAndName || showTime
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                      vertical: 6,
-                    ),
-                    child: Row(
-                      spacing: !isSender ? 10 : 0,
-                      mainAxisAlignment: !isSender
-                          ? MainAxisAlignment.start
-                          : MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        !isSender
-                            ? Text(
-                                msg['name'],
-                                style: appText(
-                                  size: 13,
-                                  weight: FontWeight.w400,
-                                ),
-                              )
-                            : SizedBox.shrink(),
-                        Text(
-                          AppFormatedTime.formattedTimestamp(msg['timestamp']),
-                          style: appText(size: 11, weight: FontWeight.w400),
+  Future<void> showEmojiPicker() async {
+    List<String> emojis = await EmojiStorage.getRecentEmojis();
+
+    final emoji = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(),
+      constraints: BoxConstraints(
+        minHeight: 0,
+        maxHeight: MediaQuery.of(context).size.height * 0.8,
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ...emojis.map(
+                      (e) => Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
                         ),
-                      ],
+                        child: IconButton(
+                          onPressed: () => Navigator.pop(context, e),
+                          icon: Text(e, style: const TextStyle(fontSize: 20)),
+                        ),
+                      ),
                     ),
-                  )
-                : SizedBox.shrink(),
-            Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.5,
-              ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () async {
+                          final selectedEmoji =
+                              await showEmojiPickerBottomSheet(context);
+                          if (selectedEmoji != null) {
+                            await EmojiStorage.addEmoji(selectedEmoji);
 
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(
-                    !isSender
-                        ? (!showTime && !showAvatarAndName)
-                              ? 5
-                              : 20
-                        : 20,
-                  ),
-                  topRight: Radius.circular(
-                    isSender
-                        ? (!showTime)
-                              ? 5
-                              : 20
-                        : 20,
-                  ),
-                  bottomLeft: Radius.circular(
-                    !isSender
-                        ? (shouldShowBottomLeftRadiusForCurrent(
-                                index: index,
-                                messages: messages,
-                                // msg: msg['content'],
-                              ))
-                              ? 20
-                              : 5
-                        : 20,
-                  ),
-                  bottomRight: Radius.circular(
-                    isSender
-                        ? shouldShowBottomRightRadiusForCurrent(
-                                index: index,
-                                messages: messages,
-                              )
-                              ? 20
-                              : 5
-                        : 20,
-                  ),
+                            setState(() {
+                              widget.msg["reaction"] = selectedEmoji;
+                            });
+                            Navigator.pop(context, selectedEmoji);
+                          }
+                        },
+                        icon: const Icon(Icons.add_reaction_outlined, size: 20),
+                      ),
+                    ),
+                  ],
                 ),
-                border: msg['type'] != 'text'
-                    ? Border.all(color: backgroundColor, width: 3)
-                    : null,
+                const SizedBox(height: 5),
+                ListTile(
+                  leading: const Icon(Icons.reply),
+                  title: const Text("Quote in reply"),
+                  onTap: () {},
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.markunread),
+                  title: const Text("Mark as unread"),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: Icon(isStarMessage ? Icons.star : Icons.star_border),
+                  title: Text(isStarMessage ? "Unstar" : "Star"),
+                  onTap: () {
+                    toggleStarMessage();
+                  },
+                ),
 
-                color: msg['type'] != 'pdf' ? backgroundColor : Colors.white,
-              ),
-              child: chatContent(
-                msg,
-                isSender: isSender,
-                showAvatarAndName: showAvatarAndName,
-                showTime: showTime,
-                shouldShowBottomLeftRadiusForCurrent:
-                    shouldShowBottomLeftRadiusForCurrent(
-                      index: index,
-                      messages: messages,
-                    ),
-                shouldShowBottomRightRadiusForCurrent:
-                    shouldShowBottomRightRadiusForCurrent(
-                      index: index,
-                      messages: messages,
-                    ),
-                color: isSender ? Colors.white : Colors.black,
-                context: context,
-              ),
+                ListTile(
+                  leading: const Icon(Icons.add_task),
+                  title: const Text("Add to Tasks"),
+                  onTap: () {},
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.copy),
+                  title: const Text("Copy text"),
+                  onTap: () =>
+                      copyMessage(context, widget.msg["content"] ?? ""),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.link),
+                  title: const Text("Copy message link"),
+                  onTap: () {
+                    copyMessage(context, widget.msg["content"] ?? "");
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.feedback_outlined),
+                  title: const Text("Send feedback on this message"),
+                  onTap: () {},
+                ),
+              ],
             ),
-          ],
-        ),
-      ],
-    ),
-  );
+          ),
+        );
+      },
+    );
+
+    if (emoji != null) {
+      await EmojiStorage.addEmoji(emoji);
+      setState(() => widget.msg["reaction"] = emoji);
+    }
+  }
 }

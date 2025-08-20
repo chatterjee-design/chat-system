@@ -1,7 +1,10 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 
-Future<void> showEmojiPickerBottomSheet(BuildContext context, controller) {
+Future<String?> showEmojiPickerBottomSheet(
+  BuildContext context, {
+  TextEditingController? controller,
+}) {
   return showModalBottomSheet(
     context: context,
     backgroundColor: Colors.white,
@@ -21,7 +24,7 @@ Future<void> showEmojiPickerBottomSheet(BuildContext context, controller) {
 
             child: EmojiPicker(
               onEmojiSelected: (category, emoji) {
-                Navigator.pop(context);
+                Navigator.pop(context, emoji.emoji);
               },
 
               config: Config(

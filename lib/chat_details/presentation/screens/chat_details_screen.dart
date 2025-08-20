@@ -228,11 +228,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   ),
                 ),
 
-                chatContainer(
+                ChatContainer(
                   index: index,
                   msg: msg,
                   isSender: isSender,
-                  context: context,
+                  // context: context,
                   showAvatarAndName: showAvatarAndName,
                   showTime: showTimestamp,
                   messages: messages,
@@ -241,11 +241,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             );
           }
 
-          return chatContainer(
+          return ChatContainer(
             index: index,
             msg: msg,
             isSender: isSender,
-            context: context,
+            // context: context,
             showAvatarAndName: showAvatarAndName,
             showTime: showTimestamp,
             messages: messages,

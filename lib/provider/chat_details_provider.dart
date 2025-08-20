@@ -88,11 +88,13 @@ class ChatDetailsProvider with ChangeNotifier {
       focusNode.unfocus();
       showEmojiPicker = true;
       notifyListeners();
-      showEmojiPickerBottomSheet(context, controller).whenComplete(() {
-        showEmojiPicker = false;
-        focusNode.requestFocus();
-        notifyListeners();
-      });
+      showEmojiPickerBottomSheet(context, controller: controller).whenComplete(
+        () {
+          showEmojiPicker = false;
+          focusNode.requestFocus();
+          notifyListeners();
+        },
+      );
     }
   }
 
