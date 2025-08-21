@@ -126,8 +126,9 @@ Widget _buildTextWithLinks(String text, {required Color normalColor}) {
       spans.add(
         TextSpan(
           text: text.substring(start, match.start),
+
           style: appText(
-            size: 14,
+            size: 15,
             weight: FontWeight.normal,
             color: normalColor,
           ),
@@ -143,7 +144,7 @@ Widget _buildTextWithLinks(String text, {required Color normalColor}) {
       TextSpan(
         text: url,
         style: appText(
-          size: 14,
+          size: 15,
           weight: FontWeight.normal,
           color: Colors.blue,
         ).copyWith(decoration: TextDecoration.underline),
@@ -159,7 +160,7 @@ Widget _buildTextWithLinks(String text, {required Color normalColor}) {
     spans.add(
       TextSpan(
         text: text.substring(start),
-        style: appText(size: 14, weight: FontWeight.normal, color: normalColor),
+        style: appText(size: 15, weight: FontWeight.normal, color: normalColor),
       ),
     );
   }

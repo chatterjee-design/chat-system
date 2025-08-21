@@ -179,23 +179,34 @@ class BubbleWidget extends StatelessWidget {
                       : null,
                   color: msg['type'] != 'pdf' ? backgroundColor : Colors.white,
                 ),
-                child: chatContent(
-                  msg,
-                  isSender: isSender,
-                  showAvatarAndName: showAvatarAndName,
-                  showTime: showTime,
-                  shouldShowBottomLeftRadiusForCurrent:
-                      shouldShowBottomLeftRadiusForCurrent(
-                        index: index,
-                        messages: messages,
+                child: Column(
+                  children: [
+                    if (msg["replied"] != null)
+                      RepliedContainer(
+                        isSender: isSender,
+                        showTime: showTime,
+                        showAvatarAndName: showAvatarAndName,
+                        msg: msg,
                       ),
-                  shouldShowBottomRightRadiusForCurrent:
-                      shouldShowBottomRightRadiusForCurrent(
-                        index: index,
-                        messages: messages,
-                      ),
-                  color: isSender ? Colors.white : Colors.black,
-                  context: context,
+                    chatContent(
+                      msg,
+                      isSender: isSender,
+                      showAvatarAndName: showAvatarAndName,
+                      showTime: showTime,
+                      shouldShowBottomLeftRadiusForCurrent:
+                          shouldShowBottomLeftRadiusForCurrent(
+                            index: index,
+                            messages: messages,
+                          ),
+                      shouldShowBottomRightRadiusForCurrent:
+                          shouldShowBottomRightRadiusForCurrent(
+                            index: index,
+                            messages: messages,
+                          ),
+                      color: isSender ? Colors.white : Colors.black,
+                      context: context,
+                    ),
+                  ],
                 ),
               ),
               if (msg["reaction"] != null)
@@ -218,6 +229,67 @@ class BubbleWidget extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class RepliedContainer extends StatelessWidget {
+  const RepliedContainer({
+    super.key,
+    required this.isSender,
+    required this.showTime,
+    required this.showAvatarAndName,
+    required this.msg,
+  });
+
+  final bool isSender;
+  final bool showTime;
+  final bool showAvatarAndName;
+  final Map<String, dynamic> msg;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(
+            !isSender ? (!showTime && !showAvatarAndName ? 5 : 20) : 20,
+          ),
+          topRight: Radius.circular(isSender ? (!showTime ? 5 : 20) : 20),
+          bottomLeft: Radius.circular(5),
+          bottomRight: Radius.circular(5),
+        ),
+      ),
+      child: ListTile(
+        dense: true,
+
+        title: Row(
+          spacing: 3,
+          children: [
+            Image.asset("assets/icons/quote.png", height: 18, width: 15),
+
+            CircleAvatar(
+              radius: 9,
+              // backgroundImage: AssetImage("assets/icons/quote.png"),
+              backgroundImage: NetworkImage(msg["replied"]["avatar"]),
+            ),
+            SizedBox(height: 5),
+            Text(
+              msg["replied"]["name"] ?? '',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        subtitle: Text(
+          msg["replied"]["content"] ?? "",
+          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }

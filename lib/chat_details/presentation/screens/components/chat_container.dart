@@ -1,8 +1,7 @@
-import 'dart:developer';
-
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../../../../provider/chat_details_provider.dart';
 import '../../../../utils/emojie_storage.dart';
 import '../../widgets/bubbble_widget.dart';
 import '../../widgets/show_emojie_picker.dart';
@@ -30,24 +29,7 @@ class ChatContainer extends StatefulWidget {
 }
 
 class _ChatContainerState extends State<ChatContainer> {
-  double dx = 0.0;
-
-  static const double maxDrag = 120;
-  static const double swipeThreshold = 80;
-
   bool isStarMessage = false;
-
-  void updateDx(double newDx) {
-    setState(() {
-      dx = newDx.clamp(-maxDrag, maxDrag);
-    });
-  }
-
-  void snapBack() {
-    setState(() {
-      dx = 0.0;
-    });
-  }
 
   void copyMessage(BuildContext context, String message) {
     Clipboard.setData(ClipboardData(text: message));
@@ -68,6 +50,8 @@ class _ChatContainerState extends State<ChatContainer> {
 
   @override
   Widget build(BuildContext context) {
+    final chatProvider = Provider.of<ChatDetailsProvider>(context);
+
     final backgroundColor = !widget.isSender
         ? Colors.grey[200]!
         : Colors.blueGrey[200]!;
@@ -77,24 +61,25 @@ class _ChatContainerState extends State<ChatContainer> {
       onLongPress: () {
         showEmojiPicker();
       },
+
       onHorizontalDragUpdate: (details) {
-        updateDx(dx + details.delta.dx);
+        chatProvider.handleHorizontalDragUpdate(
+          details,
+          widget.isSender,
+          widget.index,
+        );
       },
+
       onHorizontalDragEnd: (_) {
-        if (dx.abs() > swipeThreshold) {
-          if (dx > 0) {
-            debugPrint("➡️ Right swipe detected on message ${widget.index}");
-          } else {
-            debugPrint("⬅️ Left swipe detected on message ${widget.index}");
-          }
-        }
-        snapBack();
+        chatProvider.handleSwipeEnd(
+          index: widget.index,
+          isSender: widget.isSender,
+          msg: widget.msg,
+        );
       },
-      onHorizontalDragStart: (_) {
-        debugPrint("Horizontal drag started");
-      },
+
       child: Transform.translate(
-        offset: Offset(dx, 0),
+        offset: Offset(chatProvider.getDx(widget.index), 0),
         child: BubbleWidget(
           showAvatarAndName: widget.showAvatarAndName,
           isSender: widget.isSender,

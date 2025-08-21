@@ -10,22 +10,6 @@ import 'package:file_picker/file_picker.dart';
 import '../chat_details/presentation/widgets/show_emojie_picker.dart';
 
 class ChatDetailsProvider with ChangeNotifier {
-  final TextEditingController controller = TextEditingController();
-  final FocusNode focusNode = FocusNode();
-  final ImagePicker picker = ImagePicker();
-  final AudioRecorder recorder = AudioRecorder();
-
-  bool hasText = false;
-  bool showEmojiPicker = false;
-  bool isRecording = false;
-
-  String? recordedFilePath;
-  XFile? image;
-  XFile? otherFile;
-  List<double> waveform = [];
-
-  StreamSubscription<Amplitude>? _amplitudeSubscription;
-
   ChatDetailsProvider() {
     controller.addListener(() {
       hasText = controller.text.trim().isNotEmpty;
@@ -38,6 +22,80 @@ class ChatDetailsProvider with ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  final TextEditingController controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+  final ImagePicker picker = ImagePicker();
+  final AudioRecorder recorder = AudioRecorder();
+
+  bool hasText = false;
+  bool showEmojiPicker = false;
+
+  //image and file
+  XFile? image;
+  XFile? otherFile;
+
+  //recording
+  String? recordedFilePath;
+  bool isRecording = false;
+  StreamSubscription<Amplitude>? _amplitudeSubscription;
+  List<double> waveform = [];
+
+  //reply
+  double dx = 0.0;
+  static const double maxDrag = 120;
+  static const double swipeThreshold = 80;
+  final Map<int, double> _dxValues = {};
+  Map<String, dynamic>? replyingMessage;
+
+  double getDx(int index) => _dxValues[index] ?? 0.0;
+
+  void updateDx(int index, double newDx) {
+    _dxValues[index] = newDx.clamp(-maxDrag, maxDrag);
+    notifyListeners();
+  }
+
+  void snapBack(int index) {
+    _dxValues[index] = 0.0;
+    notifyListeners();
+  }
+
+  void handleHorizontalDragUpdate(
+    DragUpdateDetails details,
+    bool isSender,
+    int index,
+  ) {
+    double currentDx = getDx(index);
+
+    if (!isSender && details.delta.dx > 0) {
+      updateDx(index, currentDx + details.delta.dx);
+    } else if (isSender && details.delta.dx < 0) {
+      updateDx(index, currentDx + details.delta.dx);
+    }
+  }
+
+  void handleSwipeEnd({
+    required int index,
+    required bool isSender,
+    required Map<String, dynamic> msg,
+  }) {
+    double dx = getDx(index);
+
+    if (dx.abs() > swipeThreshold) {
+      if (!isSender && dx > 0) {
+        replyingMessage = msg;
+      } else if (isSender && dx < 0) {
+        replyingMessage = msg;
+      }
+    }
+
+    snapBack(index);
+  }
+
+  void clearReply() {
+    replyingMessage = null;
+    notifyListeners();
   }
 
   // ---- Recording ----
