@@ -19,7 +19,7 @@ class TextFieldSendMsg extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Column(
@@ -55,14 +55,16 @@ class TextFieldAndEmojie extends StatelessWidget {
           focusNode: chat.focusNode,
           maxLines: 7,
           minLines: 1,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             contentPadding: EdgeInsets.only(right: 22),
             hintText: 'Type a message...',
-            hintStyle: TextStyle(color: Colors.black54),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             border: InputBorder.none,
             isDense: true,
           ),
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
         Positioned(
           top: 0,
@@ -70,9 +72,9 @@ class TextFieldAndEmojie extends StatelessWidget {
           // bottom: 0,
           child: InkWell(
             onTap: () => chat.toggleEmojiPicker(context),
-            child: const Icon(
+            child: Icon(
               Icons.emoji_emotions_outlined,
-              color: Colors.teal,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),
@@ -162,12 +164,19 @@ class ChatFilesWidget extends StatelessWidget {
               onTap: chat.removeFile,
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 4),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.surface,
+                    width: 4,
+                  ),
                   color: Colors.black87,
                   shape: BoxShape.circle,
                 ),
                 padding: const EdgeInsets.all(4),
-                child: const Icon(Icons.close, size: 16, color: Colors.white),
+                child: Icon(
+                  Icons.close,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
           ),
@@ -209,12 +218,19 @@ class ChatImageWidget extends StatelessWidget {
               onTap: chat.removeImage,
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 4),
-                  color: Colors.black87,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.surface,
+                    width: 4,
+                  ),
+                  color: Theme.of(context).colorScheme.onSurface,
                   shape: BoxShape.circle,
                 ),
                 padding: const EdgeInsets.all(4),
-                child: const Icon(Icons.close, size: 16, color: Colors.white),
+                child: Icon(
+                  Icons.close,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.surface,
+                ),
               ),
             ),
           ),

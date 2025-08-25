@@ -95,7 +95,7 @@ Widget chatContent(
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w400,
-                        // color: color,
+                        color: Theme.of(context).colorScheme.onSurface,
                         // decoration: TextDecoration.underline,
                       ),
                     ),

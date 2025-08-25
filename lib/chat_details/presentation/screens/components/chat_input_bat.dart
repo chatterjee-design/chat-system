@@ -17,8 +17,10 @@ class ChatInputBar extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.only(bottom: 20, left: 5, right: 5, top: 5),
-      color: chat.recordedFilePath != null
-          ? const Color.fromARGB(136, 193, 206, 215)
+      color: chat.recordedFilePath != null || chat.isRecording
+          ? Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withValues(alpha: 0.3)
           : Colors.transparent,
       height: chat.replyingMessage != null ? 150 : null,
       child: Padding(
@@ -36,9 +38,9 @@ class ChatInputBar extends StatelessWidget {
               children: [
                 if (chat.recordedFilePath == null)
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.add_circle_outline,
-                      color: Colors.teal,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () => OptionsBottomSheet.show(context),
                   ),
@@ -77,15 +79,18 @@ class ChatInputBar extends StatelessWidget {
                         onTap: () => chat.sendMessage(scrollToBottom),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: const Icon(Icons.send, color: Colors.teal),
+                          child: Icon(
+                            Icons.send,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                       )
                     : Row(
                         children: [
                           IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.image_outlined,
-                              color: Colors.teal,
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
                             onPressed: chat.pickImageFromGallery,
                           ),

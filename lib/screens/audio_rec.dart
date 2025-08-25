@@ -85,7 +85,7 @@ class _RecordingWaveformWidgetState extends State<RecordingWaveformWidget> {
           child: Icon(
             Icons.delete_outline_outlined,
             size: 30,
-            color: Colors.red,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
         Expanded(
@@ -94,7 +94,7 @@ class _RecordingWaveformWidgetState extends State<RecordingWaveformWidget> {
             padding: EdgeInsets.symmetric(vertical: 13, horizontal: 15),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(35),
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,10 +103,13 @@ class _RecordingWaveformWidgetState extends State<RecordingWaveformWidget> {
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     scrollDirection: Axis.horizontal,
-                    reverse: true, // latest bars on right
+                    reverse: true,
                     child: CustomPaint(
                       size: Size(waveformWidth.toDouble(), 22),
-                      painter: WaveformPainter(widget.waveForm),
+                      painter: WaveformPainter(
+                        waveform: widget.waveForm,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                     ),
                   ),
                 ),
@@ -114,7 +117,7 @@ class _RecordingWaveformWidgetState extends State<RecordingWaveformWidget> {
                 Text(
                   _formatDuration(_elapsed),
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.secondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -129,12 +132,13 @@ class _RecordingWaveformWidgetState extends State<RecordingWaveformWidget> {
 
 class WaveformPainter extends CustomPainter {
   final List<double> waveform;
-  WaveformPainter(this.waveform);
+  final Color color;
+  WaveformPainter({required this.waveform, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.teal
+      ..color = color
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 

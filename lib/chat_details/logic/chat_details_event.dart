@@ -1,10 +1,8 @@
-import 'package:equatable/equatable.dart';
-
-abstract class ChatDetailsEvent extends Equatable {
+abstract class ChatDetailsEvent {
   const ChatDetailsEvent();
 
-  @override
-  List<Object?> get props => [];
+  // @override
+  // List<Object?> get props => [];
 }
 
 //Emojie
@@ -15,8 +13,8 @@ class SendMessage extends ChatDetailsEvent {
   final Function scrollToBottom;
   const SendMessage(this.scrollToBottom);
 
-  @override
-  List<Object?> get props => [scrollToBottom];
+  // @override
+  // List<Object?> get props => [scrollToBottom];
 }
 
 // Recording

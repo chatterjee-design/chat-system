@@ -77,8 +77,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 1,
         titleSpacing: 0,
         title: Row(

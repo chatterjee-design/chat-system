@@ -17,13 +17,21 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => ChatDetailsProvider())],
       child: MaterialApp(
+        themeMode: ThemeMode.system,
         title: 'Chat App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          brightness: Brightness.light,
-          primarySwatch: Colors.indigo,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepOrange,
+            brightness: Brightness.light,
+          ),
         ),
-        darkTheme: ThemeData.dark(),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepOrange,
+            brightness: Brightness.dark,
+          ),
+        ),
         home: ChatListScreen(),
       ),
     );

@@ -52,9 +52,9 @@ class _ChatContainerState extends State<ChatContainer> {
   Widget build(BuildContext context) {
     final chatProvider = Provider.of<ChatDetailsProvider>(context);
 
-    final backgroundColor = !widget.isSender
-        ? Colors.grey[200]!
-        : Colors.blueGrey[200]!;
+    final backgroundColor = widget.isSender
+        ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.7)
+        : Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3);
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,

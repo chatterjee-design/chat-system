@@ -132,7 +132,9 @@ class BubbleWidget extends StatelessWidget {
                               ? Icon(
                                   Icons.star,
                                   size: 15,
-                                  color: Colors.blueGrey[700],
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
                                 )
                               : SizedBox(),
                         ],
@@ -177,7 +179,9 @@ class BubbleWidget extends StatelessWidget {
                   border: msg['type'] != 'text'
                       ? Border.all(color: backgroundColor, width: 3)
                       : null,
-                  color: msg['type'] != 'pdf' ? backgroundColor : Colors.white,
+                  color: msg['type'] != 'pdf'
+                      ? backgroundColor
+                      : Theme.of(context).colorScheme.surface,
                 ),
                 child: Column(
                   children: [
@@ -203,7 +207,9 @@ class BubbleWidget extends StatelessWidget {
                             index: index,
                             messages: messages,
                           ),
-                      color: isSender ? Colors.white : Colors.black,
+                      color: isSender
+                          ? Theme.of(context).colorScheme.onPrimaryContainer
+                          : Theme.of(context).colorScheme.onPrimaryContainer,
                       context: context,
                     ),
                   ],
@@ -217,9 +223,14 @@ class BubbleWidget extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.blueGrey.withValues(alpha: 0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceTint.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(7),
-                    border: Border.all(color: Colors.blueGrey, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      width: 1.5,
+                    ),
                   ),
                   child: Text(
                     msg["reaction"],
@@ -250,10 +261,11 @@ class RepliedContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: EdgeInsets.only(top: 10, left: 10, right: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Theme.of(context).colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(
             !isSender ? (!showTime && !showAvatarAndName ? 5 : 20) : 20,
@@ -269,7 +281,12 @@ class RepliedContainer extends StatelessWidget {
         title: Row(
           spacing: 3,
           children: [
-            Image.asset("assets/icons/quote.png", height: 18, width: 15),
+            Image.asset(
+              "assets/icons/quote.png",
+              height: 18,
+              width: 15,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
 
             CircleAvatar(
               radius: 9,

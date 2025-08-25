@@ -81,7 +81,7 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
             Icons.delete_outline_outlined,
             size: 30,
             weight: 100,
-            color: Colors.red,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
         Expanded(
@@ -91,7 +91,7 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
             // width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(35),
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
             ),
 
             // color: Colors.white,
@@ -104,7 +104,7 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
                     isPlaying ? Icons.pause : Icons.play_arrow,
                     size: 40,
                     weight: 100,
-                    color: Colors.teal,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
 
@@ -113,8 +113,10 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
                   painter: BoldProgressWaveformPainter(
                     waveform: waveform,
                     progress: progress,
-                    playedColor: Colors.teal.shade800,
-                    unplayedColor: Colors.teal.shade200,
+                    playedColor: Theme.of(context).colorScheme.secondary,
+                    unplayedColor: Theme.of(
+                      context,
+                    ).colorScheme.secondary.withValues(alpha: 0.4),
                   ),
                 ),
                 SizedBox(width: 8),
@@ -122,7 +124,7 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
                 Text(
                   _formatDuration(totalDuration),
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

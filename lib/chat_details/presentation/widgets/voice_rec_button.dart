@@ -21,17 +21,24 @@ class RecordButton extends StatelessWidget {
         padding: EdgeInsets.all(isRecording ? 10 : 0),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isRecording ? Colors.white : Colors.transparent,
-          border: isRecording
-              ? Border.all(
-                  color: isRecording ? Colors.red : Colors.black54,
-                  width: 2,
-                )
-              : null,
+          color: isRecording
+              ? Theme.of(context).colorScheme.secondaryContainer
+              : Colors.transparent,
+          // border: isRecording
+          //     ? Border.all(
+          //         color: isRecording
+          //             ? Theme.of(context).colorScheme.secondary
+          //             : Colors.black54,
+          //         width: 2,
+          //       )
+          // : null,
         ),
         child: Icon(
           isRecording ? Icons.stop : Icons.mic,
-          color: isRecording ? Colors.red : Colors.teal,
+          color: isRecording
+              ? Theme.of(context).colorScheme.secondary
+              : Theme.of(context).colorScheme.secondary,
+
           size: 26,
         ),
       ),
