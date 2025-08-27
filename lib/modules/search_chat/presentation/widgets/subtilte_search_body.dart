@@ -1,8 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
-import '../../../core/font/app_font.dart';
+import '../../../../core/font/app_font.dart';
 import 'highlighted_text.dart';
 
 Widget buildMessageSubtitle(Map<String, dynamic> msg, String query) {

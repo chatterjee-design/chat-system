@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/font/app_font.dart';
-import '../../../utils/time_formater.dart';
+import '../../../../core/font/app_font.dart';
+import '../../../../utils/time_formater.dart';
 import 'chat_content.dart';
 
 class BubbleWidget extends StatelessWidget {

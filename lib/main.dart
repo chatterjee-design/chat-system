@@ -1,9 +1,10 @@
-import 'package:chat_system/screens/chat_list/chat_list_screen.dart';
+import 'package:chat_system/modules/chat_list/chat_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'provider/chat_details_provider.dart';
 import 'provider/chat_search_provider.dart';
+import 'provider/shared_items_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ChatDetailsProvider()),
         ChangeNotifierProvider(create: (_) => ChatSearchProvider()),
+        ChangeNotifierProvider(create: (_) => SharedItemsProvider()),
       ],
       child: MaterialApp(
         themeMode: ThemeMode.system,
@@ -26,13 +28,13 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.pink,
+            seedColor: Colors.teal,
             brightness: Brightness.light,
           ),
         ),
         darkTheme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.deepOrange,
+            seedColor: Colors.teal,
             brightness: Brightness.dark,
           ),
         ),

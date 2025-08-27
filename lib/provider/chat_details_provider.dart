@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:file_picker/file_picker.dart';
 
-import '../chat_details/presentation/widgets/show_emojie_picker.dart';
+import '../modules/chat_details/presentation/widgets/show_emojie_picker.dart';
 
 class ChatDetailsProvider with ChangeNotifier {
   ChatDetailsProvider() {

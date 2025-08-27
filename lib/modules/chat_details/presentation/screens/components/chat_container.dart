@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../../../provider/chat_details_provider.dart';
-import '../../../../utils/emojie_storage.dart';
+import '../../../../../provider/chat_details_provider.dart';
+import '../../../../../utils/emojie_storage.dart';
 import '../../widgets/bubbble_widget.dart';
 import '../../widgets/show_emojie_picker.dart';
 

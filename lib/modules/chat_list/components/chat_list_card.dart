@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/time_formater.dart';
-import '../../../chat_details/presentation/screens/chat_details_screen.dart';
+import '../../chat_details/presentation/screens/chat_details_screen.dart';
 
 Widget chatListCard(Map<String, String> chat, BuildContext context) {
   final timestamp = chat['timestamp'];

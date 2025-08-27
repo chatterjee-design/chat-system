@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../provider/chat_search_provider.dart';
+import '../../../../provider/chat_search_provider.dart';
 
 class SearchChatWidget extends StatelessWidget {
   const SearchChatWidget({super.key, required this.provider});

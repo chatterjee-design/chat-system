@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../provider/chat_search_provider.dart';
+import '../../../../provider/chat_search_provider.dart';
 import '../widgets/filter_bottom_sheet.dart';
 import '../widgets/filter_chip.dart';
 import '../widgets/search_chat_widget.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../provider/chat_details_provider.dart';
-import '../../../../screens/audio_rec.dart';
+import '../../../../../provider/chat_details_provider.dart';
+import 'audio_rec.dart';
 import 'open_bottom_sheet.dart';
 import '../../widgets/voice_message_weave.dart';
 import '../../widgets/voice_rec_button.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/font/app_font.dart';
-import '../../../../provider/chat_search_provider.dart';
-import '../../../../utils/time_formater.dart';
+import '../../../../../core/font/app_font.dart';
+import '../../../../../provider/chat_search_provider.dart';
+import '../../../../../utils/time_formater.dart';
 import '../../widgets/subtilte_search_body.dart';
 
 class SearchResult extends StatelessWidget {

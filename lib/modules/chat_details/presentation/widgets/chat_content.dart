@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../screens/pdf_viewer/pdf_viewer.dart';
+import '../../../pdf_viewer/pdf_viewer.dart';
 import 'pdf_preview.dart';
 
 Widget chatContent(
