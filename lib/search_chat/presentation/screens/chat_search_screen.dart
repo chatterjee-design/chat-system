@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/chat_search_provider.dart';
+import '../widgets/filter_bottom_sheet.dart';
+import '../widgets/filter_chip.dart';
 import '../widgets/search_chat_widget.dart';
-import '../widgets/search_result_widget.dart';
+import 'components/search_result_widget.dart';
 
 class ChatSearchScreen extends StatelessWidget {
   const ChatSearchScreen({super.key});
@@ -35,26 +37,91 @@ class _ChatSearchBody extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Wrap(
-              spacing: 8,
-              children: [
-                FilterChip(
-                  label: const Text("Date"),
-                  onSelected: (_) => _showDateFilter(context, provider),
-                ),
-                FilterChip(
-                  label: const Text("Attachment"),
-                  onSelected: (_) => _showAttachmentFilter(context, provider),
-                ),
-              ],
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  CustomFilterChip(
+                    label: "From",
+                    selected: provider.senderFilter != SenderFilter.all,
+                    onTap: () => showFilterBottomSheet<SenderFilter>(
+                      context: context,
+                      title: "From",
+                      currentValue: provider.senderFilter,
+                      values: SenderFilter.values,
+                      labelBuilder: (f) => f.toString().split('.').last,
+                      onSelected: provider.updateSenderFilter,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  CustomFilterChip(
+                    label: "Date",
+                    selected: provider.dateFilter != DateFilter.anyTime,
+                    onTap: () => showFilterBottomSheet<DateFilter>(
+                      context: context,
+                      title: "Date",
+                      currentValue: provider.dateFilter,
+                      values: DateFilter.values,
+                      labelBuilder: (f) => f.toString().split('.').last,
+                      onSelected: provider.updateDateFilter,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  CustomFilterChip(
+                    label: "Has any attachment",
+                    selected:
+                        provider.attachmentFilter != AttachmentFilter.none &&
+                        provider.attachmentFilter != AttachmentFilter.link,
+                    onTap: () => showFilterBottomSheet<AttachmentFilter>(
+                      context: context,
+                      title: "Attachment",
+                      currentValue: provider.attachmentFilter,
+                      values: AttachmentFilter.values,
+                      labelBuilder: (f) => f.toString().split('.').last,
+                      onSelected: provider.updateAttachmentFilter,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FilterChip(
+                    showCheckmark: false,
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    selected:
+                        provider.attachmentFilter == AttachmentFilter.link,
+                    label: const Text("Links"),
+                    onSelected: (_) =>
+                        provider.updateAttachmentFilter(AttachmentFilter.link),
+                  ),
+                ],
+              ),
             ),
           ),
 
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Text(
-              "Most relevant",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+          GestureDetector(
+            onTap: () => showFilterBottomSheet<SortFilter>(
+              context: context,
+              title: "Sort by",
+              currentValue: provider.sortFilter,
+              values: SortFilter.values,
+              labelBuilder: (f) => f == SortFilter.mostRelevant
+                  ? "Most Relevant"
+                  : "Most Recent",
+              onSelected: provider.updateSortFilter,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                children: [
+                  Text(
+                    provider.sortFilter == SortFilter.mostRelevant
+                        ? "Most relevent"
+                        : "Most recent",
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                  Icon(Icons.arrow_drop_down, size: 18, color: Colors.grey),
+                ],
+              ),
             ),
           ),
 
@@ -67,66 +134,6 @@ class _ChatSearchBody extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showDateFilter(BuildContext context, ChatSearchProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: DateFilter.values.map((f) {
-          return ListTile(
-            title: Text(f.toString().split('.').last),
-            onTap: () {
-              provider.updateDateFilter(f);
-              Navigator.pop(ctx);
-            },
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  void _showAttachmentFilter(
-    BuildContext context,
-    ChatSearchProvider provider,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            title: const Text("Image"),
-            onTap: () {
-              provider.updateAttachmentFilter(AttachmentFilter.image);
-              Navigator.pop(ctx);
-            },
-          ),
-          ListTile(
-            title: const Text("PDF"),
-            onTap: () {
-              provider.updateAttachmentFilter(AttachmentFilter.pdf);
-              Navigator.pop(ctx);
-            },
-          ),
-          ListTile(
-            title: const Text("Document"),
-            onTap: () {
-              provider.updateAttachmentFilter(AttachmentFilter.document);
-              Navigator.pop(ctx);
-            },
-          ),
-          ListTile(
-            title: const Text("Clear"),
-            onTap: () {
-              provider.updateAttachmentFilter(AttachmentFilter.none);
-              Navigator.pop(ctx);
-            },
           ),
         ],
       ),

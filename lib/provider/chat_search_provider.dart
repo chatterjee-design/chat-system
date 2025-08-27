@@ -5,14 +5,22 @@ enum DateFilter { anyTime, week, month, sixMonths, year }
 
 enum AttachmentFilter { none, image, pdf, document, link }
 
+enum SenderFilter { all, me, other }
+
+enum SortFilter { mostRelevant, mostRecent }
+
 class ChatSearchProvider extends ChangeNotifier {
   String _query = "";
   DateFilter _dateFilter = DateFilter.anyTime;
   AttachmentFilter _attachmentFilter = AttachmentFilter.none;
+  SenderFilter _senderFilter = SenderFilter.all;
+  SortFilter _sortFilter = SortFilter.mostRelevant;
 
   String get query => _query;
   DateFilter get dateFilter => _dateFilter;
   AttachmentFilter get attachmentFilter => _attachmentFilter;
+  SenderFilter get senderFilter => _senderFilter;
+  SortFilter get sortFilter => _sortFilter;
 
   void updateQuery(String newQuery) {
     _query = newQuery;
@@ -26,6 +34,24 @@ class ChatSearchProvider extends ChangeNotifier {
 
   void updateAttachmentFilter(AttachmentFilter filter) {
     _attachmentFilter = filter;
+    notifyListeners();
+  }
+
+  void updateSenderFilter(SenderFilter filter) {
+    _senderFilter = filter;
+    notifyListeners();
+  }
+
+  bool hasLink(String text) {
+    final urlRegex = RegExp(
+      r'((https?:\/\/)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\S*)?)',
+      caseSensitive: false,
+    );
+    return urlRegex.hasMatch(text);
+  }
+
+  void updateSortFilter(SortFilter filter) {
+    _sortFilter = filter;
     notifyListeners();
   }
 
@@ -74,9 +100,22 @@ class ChatSearchProvider extends ChangeNotifier {
           case AttachmentFilter.document:
             return type == "document";
           case AttachmentFilter.link:
-            return type == "text" &&
-                msg["content"].toString().toLowerCase().contains("http");
+            return type == "text" && hasLink(msg["content"].toString());
           default:
+            return true;
+        }
+      }).toList();
+    }
+
+    if (_senderFilter != SenderFilter.all) {
+      results = results.where((msg) {
+        final senderId = msg["senderId"].toString();
+        switch (_senderFilter) {
+          case SenderFilter.me:
+            return senderId == "1";
+          case SenderFilter.other:
+            return senderId != "1";
+          case SenderFilter.all:
             return true;
         }
       }).toList();
@@ -88,5 +127,6 @@ class ChatSearchProvider extends ChangeNotifier {
   bool get hasSearchedOrFiltered =>
       _query.isNotEmpty ||
       _dateFilter != DateFilter.anyTime ||
-      _attachmentFilter != AttachmentFilter.none;
+      _attachmentFilter != AttachmentFilter.none ||
+      _senderFilter != SenderFilter.all;
 }
