@@ -3,6 +3,7 @@ final List<Map<String, dynamic>> messages = [
   {
     "senderId": "2",
     "name": "Bob Smith",
+    "isStar": true,
     "avatar":
         "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
     "isOnline": true,
@@ -24,6 +25,7 @@ final List<Map<String, dynamic>> messages = [
   {
     "senderId": "1",
     "name": "Alice Brown",
+    "isStar": true,
     "avatar":
         "https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg",
     "isOnline": true,
@@ -34,6 +36,7 @@ final List<Map<String, dynamic>> messages = [
   {
     "senderId": "1",
     "name": "Alice Brown",
+    "isStar": true,
     "avatar":
         "https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg",
     "isOnline": true,
@@ -51,6 +54,7 @@ final List<Map<String, dynamic>> messages = [
   {
     "senderId": "2",
     "name": "Bob Smith",
+    "isStar": true,
     "avatar":
         "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
     "isOnline": true,
@@ -98,7 +102,7 @@ final List<Map<String, dynamic>> messages = [
     "isOnline": true,
     "timestamp": "2025-08-27T13:10:00Z",
     "type": "pdf",
-    "content": "https://example.com/files/meeting-agenda.pdf",
+    "content": "assets/pdf/pdf.pdf",
   },
   {
     "senderId": "1",
@@ -156,6 +160,8 @@ final List<Map<String, dynamic>> messages = [
   {
     "senderId": "1",
     "name": "Alice Brown",
+    "isStar": true,
+
     "avatar":
         "https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg",
     "isOnline": true,
@@ -274,6 +280,8 @@ final List<Map<String, dynamic>> messages = [
   {
     "senderId": "1",
     "name": "Alice Brown",
+    "isStar": true,
+
     "avatar":
         "https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg",
     "isOnline": true,
@@ -301,12 +309,16 @@ final List<Map<String, dynamic>> messages = [
     "isOnline": true,
     "timestamp": "2025-08-21T07:55:00Z",
     "type": "text",
+    "isStar": true,
+
     "content": "This is the pasta I had last night 🍝",
     "replied": null,
   },
   {
     "senderId": "1",
     "name": "Alice Brown",
+    "isStar": true,
+
     "avatar":
         "https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg",
     "isOnline": true,
@@ -330,7 +342,7 @@ final List<Map<String, dynamic>> messages = [
       "avatar":
           "https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg",
       "type": "pdf",
-      "content": "https://example.com/files/office-meeting-notes.pdf",
+      "content": "assets/pdf/pdf.pdf",
     },
   },
 

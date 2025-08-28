@@ -208,8 +208,8 @@ class BubbleWidget extends StatelessWidget {
                             messages: messages,
                           ),
                       color: isSender
-                          ? Theme.of(context).colorScheme.onPrimaryContainer
-                          : Theme.of(context).colorScheme.onPrimaryContainer,
+                          ? Theme.of(context).colorScheme.onSurface
+                          : Theme.of(context).colorScheme.onSurface,
                       context: context,
                     ),
                   ],

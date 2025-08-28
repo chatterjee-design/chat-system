@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'provider/chat_details_provider.dart';
 import 'provider/chat_search_provider.dart';
 import 'provider/shared_items_provider.dart';
+import 'provider/star_chat_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ChatDetailsProvider()),
         ChangeNotifierProvider(create: (_) => ChatSearchProvider()),
         ChangeNotifierProvider(create: (_) => SharedItemsProvider()),
+        ChangeNotifierProvider(create: (_) => StarChatProvider()),
       ],
       child: MaterialApp(
         themeMode: ThemeMode.system,
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.teal,
+            seedColor: Colors.pink,
             brightness: Brightness.light,
           ),
         ),

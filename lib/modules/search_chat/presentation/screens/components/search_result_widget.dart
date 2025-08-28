@@ -42,7 +42,7 @@ class SearchResult extends StatelessWidget {
                   ),
                 ],
               ),
-              subtitle: buildMessageSubtitle(msg, provider.query),
+              subtitle: buildMessageSubtitle(msg, provider.query, context),
             ),
             const Divider(thickness: 0.5, height: 1),
           ],

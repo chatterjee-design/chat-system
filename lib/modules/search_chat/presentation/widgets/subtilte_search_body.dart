@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/font/app_font.dart';
+import '../../../../widgets/image_viewer_scree.dart';
+import '../../../pdf_viewer/pdf_viewer.dart';
 import 'highlighted_text.dart';
 
-Widget buildMessageSubtitle(Map<String, dynamic> msg, String query) {
+Widget buildMessageSubtitle(Map<String, dynamic> msg, String query, context) {
   String content = msg["content"] ?? "";
   String type = msg["type"] ?? "text";
 
@@ -15,7 +17,7 @@ Widget buildMessageSubtitle(Map<String, dynamic> msg, String query) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (msg["replied"] != null) RepliedContainer(msg: msg),
-        HighlightedText(text: displayText, highlight: query),
+        HighlightedText(text: displayText, highlight: query, context: context),
       ],
     );
   } else {
@@ -33,26 +35,45 @@ Widget buildMessageSubtitle(Map<String, dynamic> msg, String query) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (msg["replied"] != null) RepliedContainer(msg: msg),
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade400),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 16, color: Colors.red),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(
-                  displayText,
-                  style: appText(size: 12, weight: FontWeight.w500),
-                  overflow: TextOverflow.ellipsis,
+        GestureDetector(
+          onTap: () {
+            if (type == "image") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ImageViewerScreen(imageUrl: msg['content']),
                 ),
-              ),
-            ],
+              );
+            } else if (type == "pdf") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PdfViewerScreen(pdfUrl: msg['content']),
+                ),
+              );
+            } else {}
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 16, color: Colors.red),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    displayText,
+                    style: appText(size: 12, weight: FontWeight.w500),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

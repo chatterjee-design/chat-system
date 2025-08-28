@@ -1,9 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chat_system/core/font/app_font.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../widgets/image_content_widget.dart';
+import '../../../../widgets/text_with_links_widget.dart';
 import '../../../pdf_viewer/pdf_viewer.dart';
 import 'pdf_preview.dart';
 
@@ -19,7 +17,10 @@ Widget chatContent(
 }) {
   switch (msg['type']) {
     case 'text':
-      return _buildTextWithLinks(msg['content'], normalColor: color);
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 13),
+        child: buildTextWithLinks(msg['content'], normalColor: color),
+      );
 
     case 'image':
       return ClipRRect(
@@ -45,14 +46,7 @@ Widget chatContent(
             isSender ? (shouldShowBottomRightRadiusForCurrent ? 20 : 5) : 20,
           ),
         ),
-        child: CachedNetworkImage(
-          imageUrl: msg['content'],
-          fit: BoxFit.cover,
-          fadeInDuration: Duration(milliseconds: 100),
-          placeholderFadeInDuration: Duration(milliseconds: 50),
-          placeholder: (context, url) => Container(color: Colors.grey[300]),
-          errorWidget: (context, url, error) => Icon(Icons.error),
-        ),
+        child: ImageContentWidget(imageUrl: msg['content']),
       );
     case 'pdf':
       return GestureDetector(
@@ -69,7 +63,8 @@ Widget chatContent(
           children: [
             PdfPreview(
               source: msg['content'],
-              isNetwork: false,
+              isNetwork:
+                  (msg['content']?.toString().startsWith('https') ?? false),
               isSender: isSender,
               shouldShowBottomLeftRadiusForCurrent:
                   shouldShowBottomLeftRadiusForCurrent,
@@ -78,6 +73,7 @@ Widget chatContent(
               showAvatarAndName: showAvatarAndName,
               showTime: showTime,
             ),
+
             Divider(color: Colors.grey, thickness: 0.7),
             // const SizedBox(height: 8),
             Padding(
@@ -109,81 +105,6 @@ Widget chatContent(
 
     default:
       return const Text("Unsupported message type");
-  }
-}
-
-Widget _buildTextWithLinks(String text, {required Color normalColor}) {
-  final urlRegex = RegExp(
-    r'((https?:\/\/)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\S*)?)',
-    caseSensitive: false,
-  );
-
-  final spans = <TextSpan>[];
-  int start = 0;
-
-  for (final match in urlRegex.allMatches(text)) {
-    if (match.start > start) {
-      spans.add(
-        TextSpan(
-          text: text.substring(start, match.start),
-
-          style: appText(
-            size: 15,
-            weight: FontWeight.normal,
-            color: normalColor,
-          ),
-        ),
-      );
-    }
-
-    var url = match.group(0)!;
-    // If protocol is missing, add https:// before launching
-    final launchUrlString = url.startsWith('http') ? url : 'https://$url';
-
-    spans.add(
-      TextSpan(
-        text: url,
-        style: appText(
-          size: 15,
-          weight: FontWeight.normal,
-          color: Colors.blue,
-        ).copyWith(decoration: TextDecoration.underline),
-        recognizer: TapGestureRecognizer()
-          ..onTap = () => _launchUrl(url: launchUrlString),
-      ),
-    );
-
-    start = match.end;
-  }
-
-  if (start < text.length) {
-    spans.add(
-      TextSpan(
-        text: text.substring(start),
-        style: appText(size: 15, weight: FontWeight.normal, color: normalColor),
-      ),
-    );
-  }
-
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 13),
-    child: RichText(text: TextSpan(children: spans)),
-  );
-}
-
-Future<void> _launchUrl({required String url}) async {
-  try {
-    final Uri uri = Uri.parse(url.trim());
-    final bool launched = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-
-    if (!launched) {
-      throw 'Could not launch $url';
-    }
-  } catch (e) {
-    debugPrint('Error launching URL: $e');
   }
 }
 

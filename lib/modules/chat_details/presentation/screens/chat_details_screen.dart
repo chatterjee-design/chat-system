@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/messages.dart';
 import '../../../search_chat/presentation/screens/chat_search_screen.dart';
 import '../../../shared/presentation/screens/shared_screen.dart';
+import '../../../starred_chat/presentation/screens/starred_msg_screen.dart';
 import 'components/chat_container.dart';
 import 'components/chat_input_bat.dart';
 import 'components/jump_to_bottom_btn.dart';
@@ -131,9 +132,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   context,
                   MaterialPageRoute(builder: (_) => const SharedScreen()),
                 );
-                // Handle shared action
               } else if (value == 'Board') {
-                // Handle board action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const StarredMsgScreen()),
+                );
               }
             },
             itemBuilder: (context) => [

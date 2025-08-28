@@ -57,10 +57,7 @@ class SharedScreen extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     "${msg["name"]} • ${AppFormatedTime.formattedTimestamp(msg['timestamp'])}",
-                    style: const TextStyle(
-                      fontSize: 12, // 👈 smaller
-                      color: Colors.grey, // optional subtle look
-                    ),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
               ),
