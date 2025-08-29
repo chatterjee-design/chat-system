@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/handleItemTap.dart';
+
 class SharedDetailScreen extends StatelessWidget {
   final String title;
   final List<Map<String, dynamic>> items;
@@ -38,10 +40,24 @@ class SharedDetailScreen extends StatelessWidget {
                     crossAxisSpacing: 6,
                     mainAxisSpacing: 6,
                   ),
-                  itemBuilder: (_, i) => builder(entry.value[i]),
+                  itemBuilder: (_, i) {
+                    final msg = entry.value[i];
+                    return GestureDetector(
+                      onTap: () => handleItemTap(context, msg),
+                      child: builder(msg),
+                    );
+                  },
                 )
               else
-                Column(children: entry.value.map(builder).toList()),
+                Column(
+                  children: entry.value.map((msg) {
+                    return GestureDetector(
+                      onTap: () => handleItemTap(context, msg),
+                      child: builder(msg),
+                    );
+                  }).toList(),
+                ),
+
               const SizedBox(height: 12),
             ],
           );

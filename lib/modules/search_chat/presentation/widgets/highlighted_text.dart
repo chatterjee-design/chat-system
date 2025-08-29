@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/font/app_font.dart';
-import '../../../../utils/launch_url.dart';
+import '../../../../utils/url_helper.dart';
 
 class HighlightedText extends StatelessWidget {
   final String text;
@@ -58,14 +58,13 @@ class HighlightedText extends StatelessWidget {
             color: Colors.blue,
           ).copyWith(decoration: TextDecoration.underline),
           recognizer: TapGestureRecognizer()
-            ..onTap = () => openUrl(url: launchUrlString),
+            ..onTap = () => WebHelper.openUrl(url: launchUrlString),
         ),
       );
 
       start = match.end;
     }
 
-    // Add remaining text
     if (start < text.length) {
       spans.addAll(
         _processHighlight(context, text.substring(start), lowerHighlight),

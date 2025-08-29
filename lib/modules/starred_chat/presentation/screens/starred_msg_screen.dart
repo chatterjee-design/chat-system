@@ -161,8 +161,8 @@ class MessageTile extends StatelessWidget {
         ),
       );
     } else if (type == "text" && content != null) {
-      subtitleWidget = buildTextWithLinks(
-        msg['content'],
+      subtitleWidget = TextWithLinks(
+        text: msg['content'],
         normalColor: Theme.of(context).colorScheme.onSurface,
       );
     } else if (type == "pdf" && content != null) {

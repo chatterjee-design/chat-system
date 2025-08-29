@@ -3,11 +3,22 @@ import 'package:provider/provider.dart';
 
 import '../../../../provider/shared_items_provider.dart';
 import '../../../../utils/time_formater.dart';
+import '../../../../widgets/image_viewer_scree.dart';
+import '../../../../widgets/text_with_links_widget.dart';
+import '../../../pdf_viewer/pdf_viewer.dart';
+import '../widgets/handleItemTap.dart';
 import 'shared_details_screen.dart';
 
-class SharedScreen extends StatelessWidget {
+import '../../../../utils/url_helper.dart';
+
+class SharedScreen extends StatefulWidget {
   const SharedScreen({super.key});
 
+  @override
+  State<SharedScreen> createState() => _SharedScreenState();
+}
+
+class _SharedScreenState extends State<SharedScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SharedItemsProvider>(context);
@@ -86,17 +97,37 @@ class SharedScreen extends StatelessWidget {
                         backgroundImage: NetworkImage(msg['avatar']),
                       ),
                     ),
-                    const Positioned(
+                    Positioned(
                       right: 0,
-                      child: CircleAvatar(child: Icon(Icons.link)),
+                      child: FutureBuilder<String?>(
+                        future: WebHelper.getFavicon(
+                          msg["content"],
+                        ), // fetch per link
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircleAvatar(
+                              child: Icon(Icons.link, size: 16),
+                            );
+                          }
+                          if (snapshot.hasData && snapshot.data != null) {
+                            return CircleAvatar(
+                              backgroundImage: NetworkImage(snapshot.data!),
+                            );
+                          }
+                          return const CircleAvatar(
+                            child: Icon(Icons.link, size: 16),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
               ),
-              title: Text(
-                msg["content"],
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              title: TextWithLinks(
+                text: msg["content"],
+                isOnlyLink: true,
+                normalColor: Theme.of(context).colorScheme.onSurface,
               ),
               subtitle: Row(
                 children: [
@@ -108,22 +139,17 @@ class SharedScreen extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     "${msg["name"]} • ${AppFormatedTime.formattedTimestamp(msg['timestamp'])}",
-                    style: const TextStyle(
-                      fontSize: 12, // 👈 smaller
-                      color: Colors.grey, // optional subtle look
-                    ),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
               ),
               trailing: const Icon(Icons.more_vert),
             ),
           ),
-
           _buildSection(
             context,
             "Media",
             provider.media,
-
             isGrid: true,
             (msg) => SizedBox(
               height: 90,
@@ -137,7 +163,6 @@ class SharedScreen extends StatelessWidget {
                     Positioned(
                       left: 6,
                       top: 6,
-                      // bottom: 6,
                       child: Container(
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
@@ -217,10 +242,20 @@ class SharedScreen extends StatelessWidget {
               crossAxisSpacing: 6,
               mainAxisSpacing: 6,
             ),
-            itemBuilder: (_, i) => builder(items[i]),
+            itemBuilder: (_, i) => GestureDetector(
+              onTap: () => handleItemTap(context, items[i]),
+              child: builder(items[i]),
+            ),
           )
         else
-          Column(children: items.take(previewCount).map(builder).toList()),
+          Column(
+            children: items.take(previewCount).map((msg) {
+              return GestureDetector(
+                onTap: () => handleItemTap(context, msg),
+                child: builder(msg),
+              );
+            }).toList(),
+          ),
         const SizedBox(height: 12),
       ],
     );

@@ -51,6 +51,8 @@ dependencies:
   equatable:
   file_picker: ^10.3.1
   shared_preferences: ^2.5.3
+  any_link_preview: ^3.0.3
+  html:
  
 
 dev_dependencies:

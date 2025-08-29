@@ -19,7 +19,7 @@ Widget chatContent(
     case 'text':
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 13),
-        child: buildTextWithLinks(msg['content'], normalColor: color),
+        child: TextWithLinks(text: msg['content'], normalColor: color),
       );
 
     case 'image':
