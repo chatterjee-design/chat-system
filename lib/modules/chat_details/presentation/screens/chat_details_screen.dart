@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chat_system/modules/conversation_details/presentation/screens/conversation_details_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/messages.dart';
 import '../../../search_chat/presentation/screens/chat_search_screen.dart';
@@ -86,37 +87,47 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 1,
         titleSpacing: 0,
-        title: Row(
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(backgroundImage: NetworkImage(sender['avatar'])),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: sender['isOnline'] ? Colors.green : Colors.white,
-                      border: Border.all(color: Colors.green, width: 1.5),
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ConversationOptionScreen(),
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              Stack(
+                children: [
+                  CircleAvatar(backgroundImage: NetworkImage(sender['avatar'])),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: sender['isOnline'] ? Colors.green : Colors.white,
+                        border: Border.all(color: Colors.green, width: 1.5),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                sender['name'],
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                ],
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  sender['name'],
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           PopupMenuButton<String>(

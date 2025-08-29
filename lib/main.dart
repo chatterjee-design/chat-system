@@ -1,4 +1,5 @@
 import 'package:chat_system/modules/chat_list/chat_list_screen.dart';
+import 'package:chat_system/provider/conversation_details_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ChatSearchProvider()),
         ChangeNotifierProvider(create: (_) => SharedItemsProvider()),
         ChangeNotifierProvider(create: (_) => StarChatProvider()),
+        ChangeNotifierProvider(create: (_) => ConversationOptionProvider()),
       ],
       child: MaterialApp(
         themeMode: ThemeMode.system,

@@ -3,9 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../provider/shared_items_provider.dart';
 import '../../../../utils/time_formater.dart';
-import '../../../../widgets/image_viewer_scree.dart';
 import '../../../../widgets/text_with_links_widget.dart';
-import '../../../pdf_viewer/pdf_viewer.dart';
 import '../widgets/handleItemTap.dart';
 import 'shared_details_screen.dart';
 

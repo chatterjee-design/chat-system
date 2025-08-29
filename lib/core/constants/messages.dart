@@ -31,8 +31,7 @@ final List<Map<String, dynamic>> messages = [
     "isOnline": true,
     "timestamp": "2025-08-27T13:00:00Z",
     "type": "text",
-    "content":
-        "I already got mine earlier 😄 What time is the meeting? https://chatgpt.com/c/68b14c06-deec-8324-9642-0ec62c91e9dc",
+    "content": "I already got mine earlier 😄 What time is the meeting?",
   },
   {
     "senderId": "1",
@@ -43,8 +42,7 @@ final List<Map<String, dynamic>> messages = [
     "isOnline": true,
     "timestamp": "2025-08-27T13:00:00Z",
     "type": "text",
-    "content":
-        "I already got mine earlier 😄 pub.dev/ What time is the meeting?",
+    "content": "I already got mine earlier 😄 What time is the meeting?",
   },
   {
     "senderId": "1",
@@ -55,19 +53,7 @@ final List<Map<String, dynamic>> messages = [
     "isOnline": true,
     "timestamp": "2025-08-27T13:00:00Z",
     "type": "text",
-    "content":
-        "https://chatgpt.com/c/68b14c06-deec-8324-9642-0ec62c91e9dc What time is the meeting?",
-  },
-  {
-    "senderId": "1",
-    "name": "Alice Brown",
-    "isStar": true,
-    "avatar":
-        "https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg",
-    "isOnline": true,
-    "timestamp": "2025-08-27T13:00:00Z",
-    "type": "text",
-    "content": "workspace.google.com I already got mine earlier  ",
+    "content": "I already got mine earlier 😄 What time is the meeting?",
   },
   {
     "senderId": "1",
@@ -84,8 +70,7 @@ final List<Map<String, dynamic>> messages = [
       "avatar":
           "https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg",
       "type": "text",
-      "content":
-          "I already got mine earlier 😄 What time is the meeting? open.spotify.com",
+      "content": "I already got mine earlier 😄 What time is the meeting?",
     },
   },
   {
@@ -109,18 +94,7 @@ final List<Map<String, dynamic>> messages = [
     "isOnline": true,
     "timestamp": "2025-08-27T13:07:00Z",
     "type": "text",
-    "content":
-        "Also, did you confirm the client call for Friday? open.spotify.com",
-  },
-  {
-    "senderId": "2",
-    "name": "Bob Smith",
-    "avatar":
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
-    "isOnline": true,
-    "timestamp": "2025-08-27T13:07:00Z",
-    "type": "text",
-    "content": "open.spotify.com",
+    "content": "Also, did you confirm the client call for Friday?",
   },
   {
     "senderId": "2",
