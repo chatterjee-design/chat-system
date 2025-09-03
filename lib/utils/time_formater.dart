@@ -36,48 +36,48 @@ class AppFormatedTime {
     return DateFormat('d MMM yyyy, hh:mm a').format(date);
   }
 
-  static String formattedTimestamps(String time) {
-    final now = DateTime.now();
-    final date = DateTime.parse(time).toLocal();
+  // static String formattedTimestamps(String time) {
+  //   final now = DateTime.now();
+  //   final date = DateTime.parse(time).toLocal();
 
-    final diffMinutes = date.difference(now).inMinutes;
+  //   final diffMinutes = date.difference(now).inMinutes;
 
-    if (diffMinutes > 0) {
-      if (now.year == date.year) {
-        return DateFormat('d MMM, hh:mm a').format(date);
-      } else {
-        return DateFormat('d MMM yyyy, hh:mm a').format(date);
-      }
-    }
+  //   if (diffMinutes > 0) {
+  //     if (now.year == date.year) {
+  //       return DateFormat('d MMM, hh:mm a').format(date);
+  //     } else {
+  //       return DateFormat('d MMM yyyy, hh:mm a').format(date);
+  //     }
+  //   }
 
-    final diff = now.difference(date);
+  //   final diff = now.difference(date);
 
-    if (diff.inMinutes < 1) {
-      return 'Now';
-    }
+  //   if (diff.inMinutes < 1) {
+  //     return 'Now';
+  //   }
 
-    if (now.day == date.day &&
-        now.month == date.month &&
-        now.year == date.year) {
-      return DateFormat('hh:mm a').format(date);
-    }
+  //   if (now.day == date.day &&
+  //       now.month == date.month &&
+  //       now.year == date.year) {
+  //     return DateFormat('hh:mm a').format(date);
+  //   }
 
-    // ✅ If it was yesterday
-    final yesterday = now.subtract(const Duration(days: 1));
-    if (yesterday.day == date.day &&
-        yesterday.month == date.month &&
-        yesterday.year == date.year) {
-      return 'Yesterday, ${DateFormat('hh:mm a').format(date)}';
-    }
+  //   // ✅ If it was yesterday
+  //   final yesterday = now.subtract(const Duration(days: 1));
+  //   if (yesterday.day == date.day &&
+  //       yesterday.month == date.month &&
+  //       yesterday.year == date.year) {
+  //     return 'Yesterday, ${DateFormat('hh:mm a').format(date)}';
+  //   }
 
-    // ✅ Same year, older than yesterday
-    if (now.year == date.year) {
-      return DateFormat('d MMM, hh:mm a').format(date);
-    }
+  //   // ✅ Same year, older than yesterday
+  //   if (now.year == date.year) {
+  //     return DateFormat('d MMM, hh:mm a').format(date);
+  //   }
 
-    // ✅ Different year
-    return DateFormat('d MMM yyyy, hh:mm a').format(date);
-  }
+  //   // ✅ Different year
+  //   return DateFormat('d MMM yyyy, hh:mm a').format(date);
+  // }
 
   static String getDuration(String start, String end) {
     Duration duration = DateTime.parse(end).difference(DateTime.parse(start));
