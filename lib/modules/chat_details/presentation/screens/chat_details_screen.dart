@@ -131,7 +131,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.more_vert, color: Colors.black),
+            icon: Icon(
+              Icons.more_vert,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onSelected: (value) {
               if (value == 'Search') {
                 Navigator.push(
@@ -156,8 +159,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 child: SizedBox(
                   width: 150, // Increase width
                   child: Row(
-                    children: const [
-                      Icon(Icons.search, color: Colors.black54),
+                    children: [
+                      Icon(
+                        Icons.search,
+                        // color: Theme.of(context).colorScheme.onSurface,
+                      ),
                       SizedBox(width: 10),
                       Text('Search'),
                     ],
@@ -170,7 +176,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   width: 150, // Increase width
                   child: Row(
                     children: const [
-                      Icon(Icons.folder_open, color: Colors.black54),
+                      Icon(Icons.folder_open),
                       SizedBox(width: 10),
                       Text('Shared'),
                     ],
@@ -183,7 +189,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   width: 150, // Increase width
                   child: Row(
                     children: const [
-                      Icon(Icons.push_pin, color: Colors.black54),
+                      Icon(Icons.push_pin),
                       SizedBox(width: 10),
                       Text('Board'),
                     ],
@@ -240,7 +246,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: Colors.blueGrey,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ),
@@ -285,7 +291,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         curve: Curves.easeOut,
         child: IgnorePointer(
           ignoring: !showJumpToBottom,
-          child: jumpToBottomBtn(scrollToBottom: scrollToBottom),
+          child: jumpToBottomBtn(
+            scrollToBottom: scrollToBottom,
+            context: context,
+          ),
         ),
       ),
     );

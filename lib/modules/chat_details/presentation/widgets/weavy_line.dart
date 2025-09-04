@@ -5,15 +5,18 @@ class WavyLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: WavyLinePainter());
+    return CustomPaint(painter: WavyLinePainter(context));
   }
 }
 
 class WavyLinePainter extends CustomPainter {
+  final BuildContext context;
+  WavyLinePainter(this.context);
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.blueGrey
+      ..color = Theme.of(context).colorScheme.primary
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 

@@ -14,6 +14,8 @@ class RecordButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // log('${chat.recordedFilePath}');
+    // log('${isRecording}');
     return InkWell(
       onTap: isRecording ? onRecordStop : onRecordStart,
       borderRadius: BorderRadius.circular(50),

@@ -59,7 +59,7 @@ class _ChatContainerState extends State<ChatContainer> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onLongPress: () {
-        showEmojiPicker();
+        showReactionPickerBottomSheet(msg: widget.msg);
       },
 
       onHorizontalDragUpdate: (details) {
@@ -95,7 +95,9 @@ class _ChatContainerState extends State<ChatContainer> {
     );
   }
 
-  Future<void> showEmojiPicker() async {
+  Future<void> showReactionPickerBottomSheet({
+    required Map<String, dynamic> msg,
+  }) async {
     List<String> emojis = await EmojiStorage.getRecentEmojis();
 
     final emoji = await showModalBottomSheet<String>(
@@ -152,11 +154,20 @@ class _ChatContainerState extends State<ChatContainer> {
                   ],
                 ),
                 const SizedBox(height: 5),
-                ListTile(
-                  leading: const Icon(Icons.reply),
-                  title: const Text("Quote in reply"),
-                  onTap: () {},
+                Consumer<ChatDetailsProvider>(
+                  builder: (context, chatProvider, child) {
+                    return ListTile(
+                      leading: const Icon(Icons.reply),
+                      title: const Text("Quote in reply"),
+                      onTap: () {
+                        chatProvider.quoteReply(msg: msg);
+
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
                 ),
+
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.markunread),
@@ -171,11 +182,6 @@ class _ChatContainerState extends State<ChatContainer> {
                   },
                 ),
 
-                ListTile(
-                  leading: const Icon(Icons.add_task),
-                  title: const Text("Add to Tasks"),
-                  onTap: () {},
-                ),
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.copy),
@@ -194,6 +200,12 @@ class _ChatContainerState extends State<ChatContainer> {
                 ListTile(
                   leading: const Icon(Icons.feedback_outlined),
                   title: const Text("Send feedback on this message"),
+                  onTap: () {},
+                ),
+
+                ListTile(
+                  leading: const Icon(Icons.delete_outline_outlined),
+                  title: const Text("Delete message"),
                   onTap: () {},
                 ),
               ],

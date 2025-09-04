@@ -93,6 +93,11 @@ class ChatDetailsProvider with ChangeNotifier {
     snapBack(index);
   }
 
+  void quoteReply({required Map<String, dynamic> msg}) {
+    replyingMessage = msg;
+    notifyListeners();
+  }
+
   void clearReply() {
     replyingMessage = null;
     notifyListeners();
@@ -101,6 +106,8 @@ class ChatDetailsProvider with ChangeNotifier {
   // ---- Recording ----
   Future<void> startRecording() async {
     if (await recorder.hasPermission()) {
+      // devlog.log("rec start has permission");
+
       final dir = await getApplicationDocumentsDirectory();
       final path =
           '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
@@ -130,7 +137,13 @@ class ChatDetailsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteRecording() {
+  void deleteRecording() async {
+    if (isRecording == true) {
+      await recorder.stop();
+      await _amplitudeSubscription?.cancel();
+      isRecording = false;
+    }
+
     recordedFilePath = null;
     notifyListeners();
   }

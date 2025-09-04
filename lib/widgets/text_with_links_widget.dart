@@ -41,6 +41,7 @@ class _TextWithLinksState extends State<TextWithLinks> {
       final formattedUrl = url.startsWith('http') ? url : 'https://$url';
 
       String? fetchedTitle = await WebHelper.getTitle(formattedUrl);
+      // if (!mounted) return;
       setState(() {
         title = fetchedTitle ?? url;
       });
