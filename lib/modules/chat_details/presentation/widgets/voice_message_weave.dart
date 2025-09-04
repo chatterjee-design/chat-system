@@ -1,6 +1,7 @@
-import 'dart:math';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:just_waveform/just_waveform.dart';
 
 class VoiceMessageWidget extends StatefulWidget {
   final String filePath;
@@ -22,14 +23,13 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
   Duration position = Duration.zero;
   Duration totalDuration = Duration.zero;
 
-  late List<double> waveform;
+  List<double> waveform = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
-    final rnd = Random();
-    waveform = List.generate(50, (_) => rnd.nextDouble() * 0.9 + 0.1);
+    _generateWaveform();
 
     _audioPlayer.onPositionChanged.listen((p) {
       setState(() => position = p);
@@ -42,6 +42,58 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
         isPlaying = false;
         position = Duration.zero;
       });
+    });
+  }
+
+  Future<void> _generateWaveform() async {
+    final audioFile = File(widget.filePath);
+    final waveOutFile = File('${audioFile.path}.waveform');
+
+    try {
+      final progressStream = JustWaveform.extract(
+        audioInFile: audioFile,
+        waveOutFile: waveOutFile,
+      );
+
+      final waveformData = await progressStream.last;
+      final wf = waveformData.waveform;
+      if (wf == null) {
+        setState(() => isLoading = false);
+        return;
+      }
+
+      final maxAmp = (wf.flags & 1) == 0 ? 32768.0 : 128.0;
+
+      final samples = List<double>.generate(wf.length, (i) {
+        final min = wf.getPixelMin(i).toDouble();
+        final max = wf.getPixelMax(i).toDouble();
+        return (max.abs() > min.abs() ? max.abs() : min.abs()) / maxAmp;
+      });
+
+      // 🔑 Downsample based on container width (fit bars nicely)
+      final targetBars = 60; // about WhatsApp-like density
+      final simplified = _downsample(samples, targetBars);
+
+      setState(() {
+        waveform = simplified;
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint("Waveform generation error: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
+  List<double> _downsample(List<double> data, int targetLength) {
+    if (data.isEmpty) return [];
+    if (data.length <= targetLength) return data;
+
+    final ratio = data.length / targetLength;
+    return List.generate(targetLength, (i) {
+      final start = (i * ratio).floor();
+      final end = ((i + 1) * ratio).floor().clamp(0, data.length);
+      final slice = data.sublist(start, end);
+      return slice.reduce((a, b) => a + b) / slice.length;
     });
   }
 
@@ -88,13 +140,10 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
           child: Container(
             margin: EdgeInsets.all(5),
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-            // width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(35),
               color: Theme.of(context).colorScheme.surface,
             ),
-
-            // color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -108,19 +157,31 @@ class _VoiceMessageWidgetState extends State<VoiceMessageWidget> {
                   ),
                 ),
 
-                CustomPaint(
-                  size: Size(MediaQuery.of(context).size.width * 0.42, 22),
-                  painter: BoldProgressWaveformPainter(
-                    waveform: waveform,
-                    progress: progress,
-                    playedColor: Theme.of(context).colorScheme.secondary,
-                    unplayedColor: Theme.of(
-                      context,
-                    ).colorScheme.secondary.withValues(alpha: 0.4),
-                  ),
-                ),
+                // 🔥 Real waveform painter
+                isLoading
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.42,
+                        height: 22,
+                        child: Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : CustomPaint(
+                        size: Size(
+                          MediaQuery.of(context).size.width * 0.42,
+                          22,
+                        ), // fixed width
+                        painter: BoldProgressWaveformPainter(
+                          waveform: waveform,
+                          progress: progress,
+                          playedColor: Theme.of(context).colorScheme.secondary,
+                          unplayedColor: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.4),
+                        ),
+                      ),
+
                 SizedBox(width: 8),
-                // Show total duration
                 Text(
                   _formatDuration(totalDuration),
                   style: TextStyle(
@@ -152,21 +213,30 @@ class BoldProgressWaveformPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final barWidth = size.width / waveform.length;
+    if (waveform.isEmpty) return;
+
+    final totalBars = waveform.length;
+    final barWidth = size.width / totalBars;
+
     final playedPaint = Paint()
       ..color = playedColor
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 2;
+      ..strokeWidth = barWidth * 0.8;
 
     final unplayedPaint = Paint()
       ..color = unplayedColor
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1;
+      ..strokeWidth = barWidth * 0.8;
 
-    for (int i = 0; i < waveform.length; i++) {
+    for (int i = 0; i < totalBars; i++) {
       final x = i * barWidth + barWidth / 2;
-      final barHeight = waveform[i] * size.height;
-      final isActive = i / waveform.length <= progress;
+
+      final barHeight = (waveform[i] * size.height * 10).clamp(
+        4.0,
+        size.height,
+      );
+
+      final isActive = i / totalBars <= progress;
 
       canvas.drawLine(
         Offset(x, (size.height - barHeight) / 2),

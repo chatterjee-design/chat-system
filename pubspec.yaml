@@ -53,6 +53,9 @@ dependencies:
   shared_preferences: ^2.5.3
   any_link_preview: ^3.0.3
   html:
+  file_icon: ^1.0.0
+  open_filex: ^4.7.0
+  just_waveform: ^0.0.7
  
 
 dev_dependencies:

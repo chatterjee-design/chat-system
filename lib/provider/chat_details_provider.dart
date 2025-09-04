@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../core/constants/extension.dart';
 import '../modules/chat_details/presentation/widgets/show_emojie_picker.dart';
 
 class ChatDetailsProvider with ChangeNotifier {
@@ -32,8 +33,12 @@ class ChatDetailsProvider with ChangeNotifier {
   bool hasText = false;
   bool showEmojiPicker = false;
 
-  //image and file
+  // Files picked from drive
   XFile? image;
+  XFile? videoFile;
+  XFile? audioFile;
+  XFile? documentFile;
+  XFile? archiveFile;
   XFile? otherFile;
 
   //recording
@@ -84,23 +89,38 @@ class ChatDetailsProvider with ChangeNotifier {
 
     if (dx.abs() > swipeThreshold) {
       if (!isSender && dx > 0) {
-        replyingMessage = msg;
+        setReply(msg);
+        // replyingMessage = msg;
       } else if (isSender && dx < 0) {
-        replyingMessage = msg;
+        setReply(msg);
+        // replyingMessage = msg;
       }
     }
 
     snapBack(index);
   }
 
-  void quoteReply({required Map<String, dynamic> msg}) {
+  void setReply(Map<String, dynamic> msg) {
     replyingMessage = msg;
+    notifyListeners();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!focusNode.hasFocus) {
+        focusNode.requestFocus();
+      }
+    });
+  }
+
+  void quoteReply({required Map<String, dynamic> msg}) {
+    setReply(msg);
+
     notifyListeners();
   }
 
   void clearReply() {
     replyingMessage = null;
     notifyListeners();
+    focusNode.unfocus();
   }
 
   // ---- Recording ----
@@ -174,6 +194,7 @@ class ChatDetailsProvider with ChangeNotifier {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = pickedFile;
+      _clearOthers(except: FileCategory.image);
       notifyListeners();
     }
   }
@@ -182,18 +203,9 @@ class ChatDetailsProvider with ChangeNotifier {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       image = pickedFile;
+      _clearOthers(except: FileCategory.image);
       notifyListeners();
     }
-  }
-
-  void removeImage() {
-    image = null;
-    notifyListeners();
-  }
-
-  void removeFile() {
-    otherFile = null;
-    notifyListeners();
   }
 
   Future<void> pickFileFromDrive() async {
@@ -204,24 +216,34 @@ class ChatDetailsProvider with ChangeNotifier {
       );
 
       if (result != null && result.files.isNotEmpty) {
-        String? filePath = result.files.single.path;
+        final filePath = result.files.single.path;
         if (filePath != null) {
           final extension = filePath.split('.').last.toLowerCase();
-          final imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-          final otherFileExtensions = ['pdf', 'docx', 'txt', 'doc'];
+          final category = FileExtensions.getCategory(extension);
 
-          if (imageExtensions.contains(extension)) {
-            image = XFile(filePath);
-            otherFile = null;
-            devlog.log("Image file selected: $filePath");
-          } else if (otherFileExtensions.contains(extension)) {
-            otherFile = XFile(filePath);
-            image = null;
-            devlog.log("Other file selected: $filePath");
-          } else {
-            devlog.log("Unsupported file format: $extension");
+          switch (category) {
+            case FileCategory.image:
+              image = XFile(filePath);
+              break;
+            case FileCategory.video:
+              videoFile = XFile(filePath);
+              break;
+            case FileCategory.audio:
+              audioFile = XFile(filePath);
+              break;
+            case FileCategory.document:
+              documentFile = XFile(filePath);
+              break;
+            case FileCategory.archive:
+              archiveFile = XFile(filePath);
+              break;
+            case FileCategory.other:
+              otherFile = XFile(filePath);
+              break;
           }
 
+          _clearOthers(except: category);
+          devlog.log("${category.name} file selected: $filePath");
           notifyListeners();
         }
       } else {
@@ -232,25 +254,37 @@ class ChatDetailsProvider with ChangeNotifier {
     }
   }
 
-  Future<String?> pickLocalFile() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'docx', 'txt', 'doc'],
-      );
-
-      if (result != null && result.files.single.path != null) {
-        String filePath = result.files.single.path!;
-        otherFile = XFile(filePath);
-
-        notifyListeners();
-        return filePath;
-      }
-    } catch (e) {
-      devlog.log("Error picking file: $e");
+  void removeFile(FileCategory category) {
+    switch (category) {
+      case FileCategory.image:
+        image = null;
+        break;
+      case FileCategory.video:
+        videoFile = null;
+        break;
+      case FileCategory.audio:
+        audioFile = null;
+        break;
+      case FileCategory.document:
+        documentFile = null;
+        break;
+      case FileCategory.archive:
+        archiveFile = null;
+        break;
+      case FileCategory.other:
+        otherFile = null;
+        break;
     }
+    notifyListeners();
+  }
 
-    return null;
+  void _clearOthers({required FileCategory except}) {
+    if (except != FileCategory.image) image = null;
+    if (except != FileCategory.video) videoFile = null;
+    if (except != FileCategory.audio) audioFile = null;
+    if (except != FileCategory.document) documentFile = null;
+    if (except != FileCategory.archive) archiveFile = null;
+    if (except != FileCategory.other) otherFile = null;
   }
 
   // ---- Send Message ----

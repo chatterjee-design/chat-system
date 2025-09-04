@@ -30,13 +30,11 @@ class OptionsBottomSheet {
                     chatDetailsProvider.pickImageFromCamera();
                   }),
                   _buildOption(Icons.gif, 'GIF', () {}),
-                  _buildOption(Icons.link, 'Meet link', () {
-                    // TODO: Implement
-                  }),
+                  _buildOption(Icons.link, 'Meet link', () {}),
 
                   _buildOption(Icons.upload_file, 'Files', () {
                     Navigator.pop(context);
-                    chatDetailsProvider.pickLocalFile();
+                    chatDetailsProvider.pickFileFromDrive();
                   }),
                   _buildOption(Icons.drive_folder_upload, 'Drive', () {
                     Navigator.pop(context);

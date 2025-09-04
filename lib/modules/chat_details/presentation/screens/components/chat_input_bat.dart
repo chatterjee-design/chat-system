@@ -15,16 +15,16 @@ class ChatInputBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final chat = Provider.of<ChatDetailsProvider>(context);
 
-    return Container(
-      padding: const EdgeInsets.only(bottom: 20, left: 5, right: 5, top: 5),
-      color: chat.recordedFilePath != null || chat.isRecording
-          ? Theme.of(
-              context,
-            ).colorScheme.primaryContainer.withValues(alpha: 0.3)
-          : Colors.transparent,
-      height: chat.replyingMessage != null ? 150 : null,
-      child: Padding(
-        padding: MediaQuery.of(context).viewInsets,
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 20, left: 5, right: 5, top: 5),
+        color: chat.recordedFilePath != null || chat.isRecording
+            ? Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.3)
+            : Colors.transparent,
+        // height: chat.replyingMessage != null ? 150 : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -74,20 +74,23 @@ class ChatInputBar extends StatelessWidget {
                     : (chat.recordedFilePath != null ||
                           chat.hasText ||
                           chat.image != null ||
-                          chat.otherFile != null)
-                    ? InkWell(
-                        onTap: () => chat.sendMessage(scrollToBottom),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Icon(
-                            Icons.send,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
+                          chat.otherFile != null ||
+                          chat.videoFile != null ||
+                          chat.audioFile != null ||
+                          chat.documentFile != null)
+                    ? IconButton(
+                        onPressed: () => chat.sendMessage(scrollToBottom),
+                        icon: Icon(
+                          Icons.send,
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       )
                     : Row(
                         children: [
                           IconButton(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                            ),
                             icon: Icon(
                               Icons.image_outlined,
                               color: Theme.of(context).colorScheme.secondary,
@@ -119,7 +122,7 @@ class ReplyMsg extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       dense: true,
-
+      contentPadding: EdgeInsets.only(bottom: 12, left: 12),
       title: Row(
         spacing: 3,
         children: [

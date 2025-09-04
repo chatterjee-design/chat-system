@@ -36,9 +36,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          _scrollController
-              .position
-              .minScrollExtent, // min scroll extent bcz listview is reversed
+          _scrollController.position.minScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -56,7 +54,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       }
 
       _hideButtonTimer?.cancel();
-      _hideButtonTimer = Timer(const Duration(milliseconds: 500), () {
+      _hideButtonTimer = Timer(const Duration(seconds: 2), () {
         if (mounted) setState(() => showJumpToBottom = false);
       });
     } else {
@@ -287,7 +285,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
       floatingActionButton: AnimatedOpacity(
         opacity: showJumpToBottom ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(microseconds: 500),
         curve: Curves.easeOut,
         child: IgnorePointer(
           ignoring: !showJumpToBottom,
